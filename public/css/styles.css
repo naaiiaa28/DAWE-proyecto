@@ -1,0 +1,153 @@
+/* FONDO CON PATRÓN */
+body {
+  /* Aplica el patrón desde la carpeta imágenes */
+  background-image: url('../imagenes/patron-fondo.jpg');
+  
+  /* Hace que la imagen del fondo se repita en ambos ejes */
+  background-repeat: repeat;
+  
+  /* Asegura que no haya espacios entre las repeticiones */
+  background-size: auto;
+
+  /* Opción para que siempre ocupe todo el viewport */
+  background-attachment: fixed; 
+
+  /* Quita márgenes del body para evitar espacios en la vista */
+  margin: 0;
+}
+
+
+/* CONTENEDOR PRINCIPAL */
+#contenedor-principal {
+    max-width: 90%;
+    min-height: 100vh;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 245, 0.96);
+}
+
+/* CABECERA */
+header {
+    background-color: #5a3825;
+    padding: 25px;
+}
+
+header h1 {
+    margin: 0;
+    color: #fff;
+    text-align: center;
+    font-size: 2.6rem;
+}
+
+/* MENÚ */
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background-color: #7a4a2e;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav ul li a {
+    display: block;
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    background-color: #5a3825;
+}
+
+/* CONTENIDO */
+#contenido {
+    min-height: calc(100vh - 150px);
+}
+
+/* ASIDE */
+aside {
+    background-color: #f3efe9;
+    padding: 20px;
+}
+
+aside h2 {
+    font-size: 1.4rem;
+}
+
+.categorias {
+    list-style: none;
+    padding: 0;
+}
+
+.categorias li {
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+/* MAIN */
+main {
+    padding: 20px;
+}
+
+.precio {
+    font-weight: bold;
+    color: #5a3825;
+}
+
+footer {
+  position: fixed; /* Pegado al fondo del navegador */
+  bottom: 0; /* Siempre al final */
+  width: 100%; /* Ocupa todo el ancho */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+  color: #fff; /* Texto claro */
+  text-align: center; /* Centrado */
+  padding: 10px 0; /* Espaciado interno */
+  font-size: 14px; /* Tamaño de texto */
+  z-index: 1000; /* Siempre encima si hay conflictos */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil para destacar */
+}
+
+/* CORTE DE TEXTO A X LÍNEAS */
+.card-title,
+.card-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* número de líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* BOTÓN CARRITO */
+.btn-carrito {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+}
+
+/* MENSAJE "AÑADIDO" */
+.mensaje-carrito {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #198754;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    z-index: 10;
+}
+
+/* CARD RELATIVA */
+.card {
+    position: relative;
+}
+
+
