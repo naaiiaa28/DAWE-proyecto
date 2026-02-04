@@ -46,38 +46,39 @@
 
         <!-- MAIN -->
         <main class="col-md-9">
-            <h2>Libros destacados</h2>
 
-            <div class="row">
-
-                <!-- LIBRO 1 -->
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <img src="imagenes/libro1.jpg" class="card-img-top" alt="Libro 1">
-                        <div class="card-body">
-                            <h5 class="card-title">1984</h5>
-                            <p class="card-text">George Orwell</p>
-                            <p class="precio">9,95 €</p>
-                            <button class="btn btn-primary btn-libro">Añadir al carrito</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LIBRO 2 -->
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <img src="imagenes/libro2.jpg" class="card-img-top" alt="Libro 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Dune</h5>
-                            <p class="card-text">Frank Herbert</p>
-                            <p class="precio">12,50 €</p>
-                            <button class="btn btn-primary btn-libro">Añadir al carrito</button>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- TÍTULO + BUSCADOR -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 id="titulo-productos">Todos los productos</h2>
+        
+                <input
+                    type="text"
+                    id="buscador"
+                    class="form-control w-50"
+                    placeholder="Buscar por nombre..."
+                >
             </div>
+        
+            <!-- CONTADOR -->
+            <p id="contador-productos" class="text-muted mb-2">
+                Mostrando 0 de 0 productos
+            </p>
+        
+            <!-- GRID DE PRODUCTOS -->
+            <div id="grid-productos" class="row g-3">
+                <!-- Productos generados por JS -->
+            </div>
+        
+            <!-- PAGINACIÓN -->
+            <nav class="mt-4">
+                <ul id="paginacion" class="pagination justify-content-center">
+                    <!-- Botones generados por JS -->
+                </ul>
+            </nav>
+        
         </main>
+
+               
     </div>
 
 </div>
@@ -87,6 +88,11 @@
 
 <!-- JS propio -->
 <script src="js/script.js"></script>
+<!-- Footer -->
+    <footer>
+        © 2026 Libroverso. Todos los derechos reservados.
+    </footer>
+
 </body>
 </html>
 
