@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Librería Online</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="../imagenes/favicon.ico">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS propio -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="contenedor-principal">
+
+    <!-- CABECERA -->
+    <header>
+        <h1>Librería Online</h1>
+    </header>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav>
+        <ul>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#" id="link-carrito">Carrito</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="contenido" class="row m-0">
+
+        <!-- ASIDE -->
+        <aside class="col-md-3">
+            <h2>Categorías</h2>
+            <ul class="categorias">
+                <li>Novela</li>
+                <li>Ciencia ficción</li>
+                <li>Ensayo</li>
+                <li>Infantil</li>
+            </ul>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="col-md-9">
+            <h2>Libros destacados</h2>
+
+            <div class="row">
+
+                <!-- LIBRO 1 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="imagenes/libro1.jpg" class="card-img-top" alt="Libro 1">
+                        <div class="card-body">
+                            <h5 class="card-title">1984</h5>
+                            <p class="card-text">George Orwell</p>
+                            <p class="precio">9,95 €</p>
+                            <button class="btn btn-primary btn-libro">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LIBRO 2 -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="imagenes/libro2.jpg" class="card-img-top" alt="Libro 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Dune</h5>
+                            <p class="card-text">Frank Herbert</p>
+                            <p class="precio">12,50 €</p>
+                            <button class="btn btn-primary btn-libro">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS propio -->
+<script src="js/script.js"></script>
+</body>
+</html>
+
