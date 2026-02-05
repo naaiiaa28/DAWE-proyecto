@@ -150,4 +150,23 @@ footer {
     position: relative;
 }
 
+/* DRAG & DROP */
+.drop-zone {
+    border: 2px dashed #aaa;
+    padding: 15px;
+    text-align: center;
+    color: #666;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+/* Cuando se arrastra un archivo encima */
+.drop-zone.dragover {
+    border-color: #198754;
+    background-color: #e9f7ef;
+    color: #198754;
+    font-weight: bold;
+}
+
 
