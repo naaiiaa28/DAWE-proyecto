@@ -1,3 +1,11 @@
+import { productos, getCart, saveCart, cartUnits, addToCart, decFromCart, incFromCart, removeLine, clearCart, agregarProducto } from './tienda.js';
+import { formatEUR, escapeHtml, CART_MAX_UNITS } from './utils.js';
+import { Novela } from './novela.js';
+import { CienciaFiccion } from './cienciaFiccion.js';
+import { Ensayo } from './ensayo.js';
+import { Infantil } from './infantil.js';
+import { Comic } from './comic.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     // ======= ELEMENTOS HTML =======
     const tipoLibro = document.getElementById("tipo-libro");
@@ -13,32 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const paginacion = document.getElementById('paginacion');
     const cartCount = document.getElementById('cart-count');
 
-    let productos = [];
     let paginaActual = 1;
     const productosPorPagina = 6;
 
     // ======= FUNCIONES AUXILIARES =======
 
-    function mostrarNotificacion(card, mensaje) {
-        const noti = document.createElement('div');
-        noti.className = 'alert alert-success position-absolute top-0 end-0 m-2';
-        noti.style.zIndex = 10;
-        noti.textContent = mensaje;
-        card.appendChild(noti);
-        setTimeout(() => noti.remove(), 1500);
-    }
-
     function actualizarContador(mostrando, total) {
         contador.textContent = `Mostrando ${mostrando} de ${total} productos`;
     }
 
-    // ======= CARRITO  =======
-    const CART_KEY = "carrito_dawe_v1";
-    const CART_MAX_UNITS = 20;
-
+    // ======= ELEMENTOS CARRITO =======
     const linkCarrito = document.getElementById("link-carrito");
     const badgeCount = document.getElementById("cart-count");
-    const elResumen = document.getElementById("carrito-resumen");
     const elVacio = document.getElementById("carrito-vacio");
     const elItems = document.getElementById("carrito-items");
     const elTotal = document.getElementById("carrito-total");
@@ -51,28 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
         offcanvasEl && window.bootstrap
             ? bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl)
             : null;
-
-    function getCart() {
-        try {
-            const raw = localStorage.getItem(CART_KEY);
-            const cart = raw ? JSON.parse(raw) : [];
-            return Array.isArray(cart) ? cart : [];
-        } catch {
-            return [];
-        }
-    }
-
-    function saveCart(cart) {
-        localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    }
-
-    function cartUnits(cart) {
-        return cart.reduce((acc, it) => acc + (Number(it.qty) || 0), 0);
-    }
-
-    function formatEUR(n) {
-        return `€ ${Number(n).toFixed(2)}`;
-    }
 
     function showToast(msg, ok = true) {
         if (!toast) return;
@@ -87,81 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
         badgeCount.textContent = String(cartUnits(getCart()));
     }
 
-    function addToCart(productId, meta = {}) {
-        const cart = getCart();
-        if (cartUnits(cart) >= CART_MAX_UNITS) return { ok: false, reason: "full" };
-
-        const item = cart.find((x) => x.id === productId);
-        if (item) {
-            item.qty = (Number(item.qty) || 0) + 1;
-        } else {
-            cart.push({
-                id: productId,
-                qty: 1,
-                name: meta.name || productId,
-                price: Number(meta.price) || 0,
-            });
-        }
-
-        if (cartUnits(cart) > CART_MAX_UNITS) return { ok: false, reason: "full" };
-
-        saveCart(cart);
-        updateBadge();
-        return { ok: true };
-    }
-
-    function decFromCart(productId) {
-        const cart = getCart();
-        const idx = cart.findIndex((x) => x.id === productId);
-        if (idx === -1) return;
-
-        const q = Number(cart[idx].qty) || 0;
-        if (q <= 1) cart.splice(idx, 1);
-        else cart[idx].qty = q - 1;
-
-        saveCart(cart);
-        updateBadge();
-    }
-
-    function incFromCart(productId) {
-        const cart = getCart();
-        if (cartUnits(cart) >= CART_MAX_UNITS) {
-            showToast("Carrito lleno (máx. 20).", false);
-            return;
-        }
-        const item = cart.find((x) => x.id === productId);
-        if (!item) return;
-        item.qty = (Number(item.qty) || 0) + 1;
-        saveCart(cart);
-        updateBadge();
-    }
-
-    function removeLine(productId) {
-        const cart = getCart().filter((x) => x.id !== productId);
-        saveCart(cart);
-        updateBadge();
-    }
-
-    function clearCart() {
-        saveCart([]);
-        updateBadge();
-    }
-
-    function escapeHtml(str) {
-        return String(str)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
     function renderCartUI() {
-        if (!elItems || !elTotal || !elResumen || !elVacio) return;
+        if (!elItems || !elVacio) return;
 
         const cart = getCart();
         const units = cartUnits(cart);
-        if (elResumen) elResumen.textContent = `Tienes ${units} unidad(es) en el carrito (máx. 20).`;
 
         if (cart.length === 0) {
             elVacio.classList.remove("d-none");
@@ -223,20 +125,24 @@ document.addEventListener("DOMContentLoaded", () => {
             const id = itemEl.dataset.id;
             const action = btn.dataset.action;
 
-            if (action === "inc") incFromCart(id);
+            if (action === "inc") {
+                const result = incFromCart(id);
+                if (!result.ok) showToast("Carrito lleno (máx. 20).", false);
+            }
             if (action === "dec") decFromCart(id);
             if (action === "remove") removeLine(id);
 
+            updateBadge();
             renderCartUI();
         });
     }
 
-    if (btnVaciar) btnVaciar.addEventListener("click", () => { clearCart(); renderCartUI(); showToast("Carrito vaciado."); });
-    if (btnFinalizar) btnFinalizar.addEventListener("click", () => { clearCart(); renderCartUI(); showToast("Compra finalizada (simulación) ✅", true); });
+    if (btnVaciar) btnVaciar.addEventListener("click", () => { clearCart(); updateBadge(); renderCartUI(); showToast("Carrito vaciado."); });
+    if (btnFinalizar) btnFinalizar.addEventListener("click", () => { clearCart(); updateBadge(); renderCartUI(); showToast("Compra finalizada (simulación) ✅", true); });
 
     updateBadge();
 
-    // ======= FUNCIONALIDAD PRODUCTOS =======  esto no deberia estar aqui
+    // ======= FUNCIONALIDAD PRODUCTOS =======
 
     function mostrarProductos() {
         const filtro = buscador.value.trim().toLowerCase();
@@ -252,23 +158,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         grid.innerHTML = '';
 
-        productosPagina.forEach((p, i) => {
+        productosPagina.forEach((p) => {
             const col = document.createElement('div');
             col.className = 'col-md-4';
 
             const card = document.createElement('div');
             card.className = 'card position-relative';
 
-            const id = `libro-${i}-${Date.now()}`;
+            // Determinar el atributo extra según el tipo de producto
+            let extraInfo = '';
+            if (p.autor) extraInfo = `Autor: ${p.autor}`;
+            else if (p.editor) extraInfo = `Editor: ${p.editor}`;
+            else if (p.edadRecomendada) extraInfo = `Edad: ${p.edadRecomendada}`;
+            else if (p.ilustrador) extraInfo = `Ilustrador: ${p.ilustrador}`;
 
             card.innerHTML = `
                 <div class="card-body position-relative">
-                    <h5 class="card-title">${p.nombre}</h5>
-                    <p class="card-text">${p.descripcion}</p>
-                    <p>Precio: €${p.precio}</p>
-                    <p>${p.extra}</p>
+                    <h5 class="card-title">${escapeHtml(p.nombre)}</h5>
+                    <p class="card-text">${escapeHtml(p.descripcion)}</p>
+                    <p>Precio: ${formatEUR(p.precio)}</p>
+                    <p class="text-muted small">${escapeHtml(extraInfo)}</p>
                     <button class="btn btn-primary position-absolute top-0 end-0 m-2 btn-carrito"
-                        data-id="${id}" data-name="${p.nombre}" data-price="${p.precio}">
+                        data-id="${p.id}" data-name="${escapeHtml(p.nombre)}" data-price="${p.precio}">
                         🛒
                     </button>
                 </div>
@@ -289,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const btnPrev = document.createElement('li');
             btnPrev.className = 'page-item';
             btnPrev.innerHTML = `<a class="page-link" href="#">Anterior</a>`;
-            btnPrev.addEventListener('click', () => { paginaActual--; mostrarProductos(); });
+            btnPrev.addEventListener('click', (e) => { e.preventDefault(); paginaActual--; mostrarProductos(); });
             paginacion.appendChild(btnPrev);
         }
 
@@ -297,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const btn = document.createElement('li');
             btn.className = `page-item ${i === paginaActual ? 'active' : ''}`;
             btn.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-            btn.addEventListener('click', () => { paginaActual = i; mostrarProductos(); });
+            btn.addEventListener('click', (e) => { e.preventDefault(); paginaActual = i; mostrarProductos(); });
             paginacion.appendChild(btn);
         }
 
@@ -305,32 +216,64 @@ document.addEventListener("DOMContentLoaded", () => {
             const btnNext = document.createElement('li');
             btnNext.className = 'page-item';
             btnNext.innerHTML = `<a class="page-link" href="#">Siguiente</a>`;
-            btnNext.addEventListener('click', () => { paginaActual++; mostrarProductos(); });
+            btnNext.addEventListener('click', (e) => { e.preventDefault(); paginaActual++; mostrarProductos(); });
             paginacion.appendChild(btnNext);
         }
     }
 
     buscador.addEventListener('input', () => { paginaActual = 1; mostrarProductos(); });
 
+    // Event delegation para botones de carrito
+    grid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-carrito');
+        if (!btn) return;
+
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        const price = btn.dataset.price;
+
+        const result = addToCart(id, { name, price });
+        if (result.ok) {
+            showToast("Añadido al carrito ✓", true);
+            updateBadge();
+        } else {
+            showToast("Carrito lleno (máx. 20).", false);
+        }
+    });
+
     // ======= FORMULARIO AÑADIR LIBRO =======
-    if(formLibro){
-        formLibro.addEventListener("submit", (e) => {
+    if (formLibro) {
+        formLibro.addEventListener('submit', (e) => {
             e.preventDefault();
-            const nombre = document.getElementById('nombre-libro').value;
-            const descripcion = document.getElementById('descripcion-libro').value;
-            const precio = parseFloat(document.getElementById('precio-libro').value) || 0;
-            const extra = document.getElementById('extra').value || '';
+            const nombre = document.getElementById('nombre-libro').value.trim();
+            const precio = parseFloat(document.getElementById('precio-libro').value);
+            const descripcion = document.getElementById('descripcion-libro').value.trim();
+            const tipo = tipoLibro ? tipoLibro.value : '';
+            const extraVal = inputExtra ? inputExtra.value.trim() : null;
 
-            productos.push({nombre, descripcion, precio, extra});
-            formLibro.reset();
-            campoExtra.classList.add('d-none');
+            if (!tipo || !nombre || isNaN(precio)) {
+                showToast('Completa tipo, nombre y precio', false);
+                return;
+            }
 
-            mostrarProductos();
+            // Crear payload y delegar en tienda.agregarProducto (asegúrate de importar agregarProducto)
+            const payload = { tipo, nombre, precio, descripcion, extra: extraVal, imagen: null };
+            const nuevo = agregarProducto(payload);
+
+            if (nuevo) {
+                showToast('Producto añadido correctamente');
+                formLibro.reset();
+                if (campoExtra) campoExtra.classList.add('d-none');
+                paginaActual = 1;
+                mostrarProductos();
+            } else {
+                showToast('No se pudo añadir el producto', false);
+            }
         });
     }
 
     // ======= TIPO LIBRO / CAMPO EXTRA =======
-    if(tipoLibro){
+    if (tipoLibro) {
         tipoLibro.addEventListener("change", () => {
             const valor = tipoLibro.value;
             if (valor === "") {
@@ -357,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ======= DRAG & DROP =======
-    if(dropZone){
+    if (dropZone) {
         const textoOriginal = dropZone.textContent;
         dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
         dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
@@ -369,17 +312,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ======= INICIO ======= esto sobraria es para pruebas
-    productos = [
-        {nombre: 'Libro 1', descripcion: 'Descripción del libro 1', precio: 10, extra: 'Extra 1'},
-        {nombre: 'Libro 2', descripcion: 'Descripción del libro 2', precio: 12, extra: 'Extra 2'},
-        {nombre: 'Libro 3', descripcion: 'Descripción del libro 3', precio: 8, extra: 'Extra 3'},
-        {nombre: 'Libro 4', descripcion: 'Descripción del libro 4', precio: 15, extra: 'Extra 4'},
-        {nombre: 'Libro 5', descripcion: 'Descripción del libro 5', precio: 9, extra: 'Extra 5'},
-        {nombre: 'Libro 6', descripcion: 'Descripción del libro 6', precio: 11, extra: 'Extra 6'},
-        {nombre: 'Libro 7', descripcion: 'Descripción del libro 7', precio: 14, extra: 'Extra 7'},
-        {nombre: 'Libro 8', descripcion: 'Descripción del libro 8', precio: 13, extra: 'Extra 8'}
-    ];
-
+    // ======= INICIO =======
     mostrarProductos();
 });

@@ -22,7 +22,7 @@ body {
     max-width: 90%;
     min-height: 100vh;
     margin: 0 auto;
-    background-color: rgba(255, 255, 245, 0.96);
+    background-color: transparent;
 }
 
 /* CABECERA */
