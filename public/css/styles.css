@@ -45,19 +45,25 @@ nav ul {
     padding: 0;
     display: flex;
     justify-content: center;
+    align-items: center;        
     background-color: #7a4a2e;
 }
 
 nav ul li {
     margin: 0 20px;
+    display: flex;
+    align-items: center;        
 }
 
 nav ul li a {
-    display: block;
+    display: inline-flex;       
+    align-items: center;        
+    gap: 6px;
     padding: 12px;
     color: white;
     text-decoration: none;
     font-weight: bold;
+    line-height: 1;             
 }
 
 nav ul li a:hover {
@@ -143,6 +149,14 @@ footer {
     border-radius: 6px;
     font-size: 0.8rem;
     z-index: 10;
+}
+
+/* LINK "CARRITO" DEL NAV (para que no salga azul/visitado) */
+#link-carrito,
+#link-carrito:visited,
+#link-carrito:hover {
+    color: white !important;
+    text-decoration: none !important;
 }
 
 /* CARD RELATIVA */

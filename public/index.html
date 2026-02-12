@@ -26,7 +26,9 @@
     <nav>
         <ul>
             <li><a href="#">Inicio</a></li>
-            <li><a href="#" id="link-carrito">Carrito</a></li>
+            <a href="#" id="link-carrito">
+                Carrito <span id="cart-count" class="badge bg-success">0</span>
+            </a>
         </ul>
     </nav>
 
@@ -51,14 +53,14 @@
                 </div>
 
                 <!-- Campo extra dinámico -->
-		<div class="mb-2 d-none" id="campo-extra">
-		    <input
-			type="text"
-			id="extra"
-			class="form-control"
-			placeholder="ygigibh"
-		    >
-		</div>
+                <div class="mb-2 d-none" id="campo-extra">
+                    <input
+                    type="text"
+                    id="extra"
+                    class="form-control"
+                    placeholder="ygigibh"
+                    >
+                </div>
 
 
                 <!-- Nombre -->
@@ -154,6 +156,20 @@
 
 <!-- JS propio -->
 <script src="js/script.js"></script>
+
+<!-- OFFCANVAS CARRITO -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCarrito" aria-labelledby="offcanvasCarritoLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasCarritoLabel">Carrito</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <div id="carrito-vacio" class="alert alert-info">Tu carrito está vacío.</div>
+    <div id="carrito-items" class="d-flex flex-column gap-2"></div>
+  </div>
+</div>
+
 
 </body>
 </html>
