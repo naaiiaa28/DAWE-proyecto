@@ -241,76 +241,183 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ======= FORMULARIO AÑADIR LIBRO =======
-    if (formLibro) {
-        formLibro.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const nombre = document.getElementById('nombre-libro').value.trim();
-            const precio = parseFloat(document.getElementById('precio-libro').value);
-            const descripcion = document.getElementById('descripcion-libro').value.trim();
-            const tipo = tipoLibro ? tipoLibro.value : '';
-            const extraVal = inputExtra ? inputExtra.value.trim() : null;
+const inputImagen = document.getElementById("imagen-libro");
+const mensajes = document.getElementById("mensajes-form");
 
-            if (!tipo || !nombre || isNaN(precio)) {
-                showToast('Completa tipo, nombre y precio', false);
-                return;
-            }
+const IMAGEN_DEFAULT = "imagenes/default.jpg";
 
-            // Crear payload y delegar en tienda.agregarProducto (asegúrate de importar agregarProducto)
-            const payload = { tipo, nombre, precio, descripcion, extra: extraVal, imagen: null };
-            const nuevo = agregarProducto(payload);
+/* ===========================
+   MENSAJES
+=========================== */
 
-            if (nuevo) {
-                showToast('Producto añadido correctamente');
-                formLibro.reset();
-                if (campoExtra) campoExtra.classList.add('d-none');
-                paginaActual = 1;
-                mostrarProductos();
-            } else {
-                showToast('No se pudo añadir el producto', false);
-            }
+function mostrarMensaje(texto, ok = true) {
+    mensajes.textContent = texto;
+    mensajes.className = "mt-3 alert";
+    mensajes.classList.add(ok ? "alert-success" : "alert-danger");
+
+    setTimeout(() => {
+        mensajes.textContent = "";
+        mensajes.className = "";
+    }, 2000);
+}
+
+/* ===========================
+   CAMPO EXTRA DINÁMICO
+=========================== */
+
+if (tipoLibro) {
+    tipoLibro.addEventListener("change", () => {
+
+        console.log("Cambio detectado"); // <-- para comprobar
+
+        const valor = tipoLibro.value;
+
+        if (valor === "") {
+            campoExtra.classList.add("d-none");
+            inputExtra.value = "";
+            return;
+        }
+
+        campoExtra.classList.remove("d-none");
+
+        switch (valor) {
+            case "novela":
+                 inputExtra.placeholder = "Autor";
+                break;
+            case "ciencia":
+                inputExtra.placeholder = "Campo de estudio";
+                break;
+            case "ensayo":
+                inputExtra.placeholder = "Editor";
+                break;
+            case "infantil":
+                inputExtra.placeholder = "Edad recomendada";
+                break;
+            case "comic":
+                inputExtra.placeholder = "Ilustrador";
+                break;
+        }
+    });
+}
+
+/* ===========================
+   DRAG & DROP
+=========================== */
+
+if (dropZone && inputImagen) {
+
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+
+        const files = e.dataTransfer.files;
+
+        if (files.length > 1) {
+            mostrarMensaje("Solo se permite una imagen", false);
+            return;
+        }
+
+        const file = files[0];
+
+        if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+            mostrarMensaje("Formato no válido. Solo JPG o PNG", false);
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        inputImagen.files = dataTransfer.files;
+
+        mostrarMensaje("Imagen añadida correctamente ✔", true);
+    });
+}
+
+/* ===========================
+   ENVÍO FORMULARIO
+=========================== */
+
+if (formLibro) {
+
+    formLibro.addEventListener("submit", (e) => {
+
+        e.preventDefault();
+
+        const nombre = document.getElementById("nombre-libro").value.trim();
+        const precio = parseFloat(document.getElementById("precio-libro").value);
+        const descripcion = document.getElementById("descripcion-libro").value.trim();
+        const tipo = tipoLibro.value;
+        const extraVal = inputExtra.value.trim();
+
+        if (tipo === "") {
+            mostrarMensaje("Debes escoger un tipo", false);
+            return;
+        }
+
+        if (!nombre) {
+            mostrarMensaje("El nombre es obligatorio", false);
+            return;
+        }
+
+        if (isNaN(precio) || precio <= 0) {
+            mostrarMensaje("El precio debe ser válido", false);
+            return;
+        }
+
+        if (!extraVal) {
+        const nombreCampo = inputExtra.placeholder;
+        mostrarMensaje(`El  ${nombreCampo} es obligatorio`, false);
+        return;
+        }
+
+
+        let imagenFinal = IMAGEN_DEFAULT;
+
+        if (inputImagen.files.length > 0) {
+            imagenFinal = URL.createObjectURL(inputImagen.files[0]);
+        }
+
+        const nuevo = agregarProducto({
+            tipo,
+            nombre,
+            precio,
+            descripcion,
+            extra: extraVal,
+            imagen: imagenFinal
         });
-    }
 
-    // ======= TIPO LIBRO / CAMPO EXTRA =======
-    if (tipoLibro) {
-        tipoLibro.addEventListener("change", () => {
-            const valor = tipoLibro.value;
-            if (valor === "") {
-                campoExtra.classList.add("d-none");
-                inputExtra.value = "";
-            } else {
-                campoExtra.classList.remove("d-none");
-                switch (valor) {
-                    case "novela":
-                    case "ciencia":
-                        inputExtra.placeholder = "Autor";
-                        break;
-                    case "ensayo":
-                        inputExtra.placeholder = "Editor";
-                        break;
-                    case "infantil":
-                        inputExtra.placeholder = "Edad recomendada";
-                        break;
-                    default:
-                        inputExtra.placeholder = "Campo extra";
-                }
-            }
-        });
-    }
+        if (!nuevo) {
+            mostrarMensaje("Error al añadir producto", false);
+            return;
+        }
 
-    // ======= DRAG & DROP =======
-    if (dropZone) {
-        const textoOriginal = dropZone.textContent;
-        dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
-        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-        dropZone.addEventListener("drop", (e) => {
-            e.preventDefault();
-            dropZone.classList.remove("dragover");
-            dropZone.textContent = "Imagen añadida correctamente ✔";
-            setTimeout(() => dropZone.textContent = textoOriginal, 1500);
-        });
-    }
+        // ACTUALIZAR TIENDA
+        if (typeof mostrarProductos === "function") {
+            paginaActual = 1;
+            mostrarProductos();
+        }
+
+        if (typeof actualizarPaginacion === "function") {
+            actualizarPaginacion();
+        }
+
+        formLibro.reset();
+        campoExtra.classList.add("d-none");
+
+        mostrarMensaje("Libro añadido correctamente ✔", true);
+    });
+}
+
+
 
     // ======= INICIO =======
     mostrarProductos();
