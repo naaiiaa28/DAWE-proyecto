@@ -27,7 +27,7 @@
         <ul>
             <li><a href="index.html">Inicio</a></li>
             <li>
-+                <a href="#" id="link-carrito" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito" aria-controls="offcanvasCarrito">
+                <a href="#" id="link-carrito" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito" aria-controls="offcanvasCarrito">
                     Carrito <span id="cart-count" class="badge bg-success">0</span>
                 </a>
             </li>
@@ -44,7 +44,7 @@
 
                 <div class="mb-2">
                     <select id="tipo-libro" class="form-select">
-                        <option value="">Tipo de libro</option>
+                        <option value="" disabled selected hidden>Tipo de libro</option>
                         <option value="novela">Novela</option>
                         <option value="ciencia">Ciencia ficción</option>
                         <option value="ensayo">Ensayo</option>
@@ -75,7 +75,9 @@
                 </div>
 
                 <div id="drop-zone" class="drop-zone">
-                    Arrastra aquí la imagen del libro
+                    <span class="drop-zone-text" id="dropText">
+                        Arrastra aquí la imagen del libro
+                    </span>
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 mt-2">

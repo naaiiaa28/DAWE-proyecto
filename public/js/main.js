@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const campoExtra = document.getElementById("campo-extra");
     const inputExtra = document.getElementById("extra");
     const formLibro = document.getElementById("form-libro");
-    const dropZone = document.getElementById("drop-zone");
 
     const grid = document.getElementById('grid-productos');
     const buscador = document.getElementById('buscador');
@@ -174,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             card.innerHTML = `
                 <div class="card-body position-relative">
+                    <img src="${p.imagen}" alt="Portada de ${escapeHtml(p.nombre)}" class="card-img-top mb-2">
                     <h5 class="card-title">${escapeHtml(p.nombre)}</h5>
                     <p class="card-text">${escapeHtml(p.descripcion)}</p>
                     <p>Precio: ${formatEUR(p.precio)}</p>
@@ -184,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </button>
                 </div>
             `;
+
 
             col.appendChild(card);
             grid.appendChild(col);
@@ -234,10 +235,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = addToCart(id, { name, price });
         if (result.ok) {
-            showToast("Añadido al carrito ✓", true);
+            showButtonToast(btn,"Añadido al carrito ✓", true);
             updateBadge();
         } else {
-            showToast("Carrito lleno (máx. 20).", false);
+            showButtonToast(btn,"Carrito lleno (máx. 20).", false);
         }
     });
 
@@ -300,47 +301,65 @@ if (tipoLibro) {
     });
 }
 
-/* ===========================
-   DRAG & DROP
-=========================== */
+const dropZone = document.getElementById("drop-zone");
+const dropText = document.getElementById("dropText");
 
-if (dropZone && inputImagen) {
+const placeholderText = "Arrastra aquí la imagen del libro";
+const successText = "¡elemento añadido!";
 
-    dropZone.addEventListener("dragover", (e) => {
+// =====================================================
+//  MUY IMPORTANTE: evitar que el navegador abra el archivo
+// =====================================================
+["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+    document.addEventListener(eventName, (e) => {
         e.preventDefault();
-        dropZone.classList.add("dragover");
+        e.stopPropagation();
     });
+});
 
-    dropZone.addEventListener("dragleave", () => {
+// =====================================================
+// DRAG OVER EN LA ZONA
+// =====================================================
+dropZone.addEventListener("dragover", () => {
+    dropZone.classList.add("dragover");
+});
+
+// =====================================================
+// DRAG ENTER (mejora la detección)
+// =====================================================
+dropZone.addEventListener("dragenter", () => {
+    dropZone.classList.add("dragover");
+});
+
+// =====================================================
+// DRAG LEAVE
+// =====================================================
+dropZone.addEventListener("dragleave", (e) => {
+    // 👇 evita falsos dragleave al pasar por hijos
+    if (!dropZone.contains(e.relatedTarget)) {
         dropZone.classList.remove("dragover");
-    });
+    }
+});
 
-    dropZone.addEventListener("drop", (e) => {
+// =====================================================
+// DROP
+// =====================================================
+dropZone.addEventListener("drop", (e) => {
+    dropZone.classList.remove("dragover");
+    dropZone.classList.add("success");
 
-        e.preventDefault();
-        dropZone.classList.remove("dragover");
+    const files = e.dataTransfer.files;
 
-        const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+        dropText.textContent = successText;
+    }
 
-        if (files.length > 1) {
-            mostrarMensaje("Solo se permite una imagen", false);
-            return;
-        }
+    setTimeout(() => {
+        dropZone.classList.remove("success");
+        dropText.textContent = placeholderText;
+    }, 1500);
+});
 
-        const file = files[0];
-
-        if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
-            mostrarMensaje("Formato no válido. Solo JPG o PNG", false);
-            return;
-        }
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        inputImagen.files = dataTransfer.files;
-
-        mostrarMensaje("Imagen añadida correctamente ✔", true);
-    });
-}
 
 /* ===========================
    ENVÍO FORMULARIO
@@ -379,13 +398,13 @@ if (formLibro) {
         return;
         }
 
-
         let imagenFinal = IMAGEN_DEFAULT;
 
         if (inputImagen.files.length > 0) {
             imagenFinal = URL.createObjectURL(inputImagen.files[0]);
         }
 
+        
         const nuevo = agregarProducto({
             tipo,
             nombre,
@@ -417,6 +436,32 @@ if (formLibro) {
     });
 }
 
+//mensaje cuando se da al boton del carrito
+function showButtonToast(btn, msg, ok = true) {
+    if (!btn) return;
+
+    const toastEl = document.createElement("div");
+    toastEl.className = `btn-toast ${ok ? "success" : "error"}`;
+    toastEl.textContent = msg;
+
+    toastEl.style.position = "absolute";
+    toastEl.style.top = "-35px";
+    toastEl.style.right = "0";
+    toastEl.style.padding = "5px 10px";
+    toastEl.style.backgroundColor = ok ? "#28a745" : "#dc3545";
+    toastEl.style.color = "white";
+    toastEl.style.borderRadius = "5px";
+    toastEl.style.fontSize = "0.85rem";
+    toastEl.style.zIndex = "1000";
+    toastEl.style.whiteSpace = "nowrap";
+    toastEl.style.pointerEvents = "none";
+
+    btn.parentElement.appendChild(toastEl);
+
+    requestAnimationFrame(() => toastEl.classList.add("show"));
+
+    setTimeout(() => toastEl.remove(), 1500);
+}
 
 
     // ======= INICIO =======
