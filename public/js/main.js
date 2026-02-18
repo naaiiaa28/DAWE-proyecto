@@ -12,6 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const campoExtra = document.getElementById("campo-extra");
     const inputExtra = document.getElementById("extra");
     const formLibro = document.getElementById("form-libro");
+    const inputImagen = document.getElementById("imagen-libro");
+    const mensajes = document.getElementById("mensajes-form");
+
+    const IMAGEN_DEFAULT = 'imagenes/imagesNotFound.png';
 
     const grid = document.getElementById('grid-productos');
     const buscador = document.getElementById('buscador');
@@ -191,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             card.innerHTML = `
                 <div class="card-body position-relative">
-                    <img src="${p.imagen}" alt="Portada de ${escapeHtml(p.nombre)}" class="card-img-top mb-2">
+                    <img src="${p.imagen}" class="card-img-top producto-img" data-id="${p.id}" alt="${escapeHtml(p.nombre)}">
                     <h5 class="card-title">${escapeHtml(p.nombre)}</h5>
                     <p class="card-text">${escapeHtml(p.descripcion)}</p>
                     <p>Precio: ${formatEUR(p.precio)}</p>
@@ -261,11 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-const inputImagen = document.getElementById("imagen-libro");
-const mensajes = document.getElementById("mensajes-form");
-
-const IMAGEN_DEFAULT = "imagenes/default.jpg";
-
 /* ===========================
    MENSAJES
 =========================== */
@@ -325,6 +324,7 @@ const dropText = document.getElementById("dropText");
 
 const placeholderText = "Arrastra aquí la imagen del libro";
 const successText = "¡elemento añadido!";
+let archivoDrop = null;
 
 // =====================================================
 //  MUY IMPORTANTE: evitar que el navegador abra el archivo
@@ -371,6 +371,7 @@ dropZone.addEventListener("drop", (e) => {
 
     if (files && files.length > 0) {
         dropText.textContent = successText;
+        archivoDrop = files[0]; 
     }
 
     setTimeout(() => {
@@ -419,11 +420,15 @@ if (formLibro) {
 
         let imagenFinal = IMAGEN_DEFAULT;
 
-        if (inputImagen.files.length > 0) {
+        // prioridad 1 → input file
+        if (inputImagen && inputImagen.files.length > 0) {
             imagenFinal = URL.createObjectURL(inputImagen.files[0]);
         }
+        // prioridad 2 → drag & drop
+        else if (archivoDrop) {
+            imagenFinal = URL.createObjectURL(archivoDrop);
+        }
 
-        
         const nuevo = agregarProducto({
             tipo,
             nombre,
@@ -481,6 +486,99 @@ function showButtonToast(btn, msg, ok = true) {
 
     setTimeout(() => toastEl.remove(), 1500);
 }
+
+function getExtraInfo(producto) {
+  // Ajusta esto según tus clases si usas getters.
+  // Intento “inteligente” para tus tipos:
+  return (
+    producto.autor ||
+    producto.editor ||
+    producto.editorial ||
+    producto.edad ||
+    producto.edadRecomendada ||
+    producto.ilustrador ||
+    producto.extra ||
+    ""
+  );
+}
+
+function openProductoDetalle(producto) {
+  // Evita duplicados
+  if (document.querySelector(".producto-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.className = "producto-overlay";
+
+  const modal = document.createElement("div");
+  modal.className = "producto-modal";
+
+  const extra = getExtraInfo(producto);
+
+  // (si quieres probar scroll) producto.descripcion.repeat(10)
+  const descripcionLarga = String(producto.descripcion ?? "").repeat(1);
+
+  modal.innerHTML = `
+    <button class="producto-modal-close" type="button" aria-label="Cerrar">×</button>
+
+    <div class="producto-modal-izq">
+      <img src="${producto.imagen}" alt="${escapeHtml(producto.nombre)}">
+    </div>
+
+    <div class="producto-modal-der">
+      <h3>${escapeHtml(producto.nombre)} — € ${Number(producto.precio).toFixed(2)}</h3>
+
+      ${extra ? `<div class="producto-modal-meta"><strong>Extra:</strong> ${escapeHtml(extra)}</div>` : ""}
+
+      <div class="producto-modal-meta"><strong>Descripción:</strong></div>
+      <p style="margin:0; white-space: pre-wrap;">${escapeHtml(descripcionLarga)}</p>
+    </div>
+  `;
+
+  function close() {
+    document.removeEventListener("keydown", onKey);
+    overlay.remove();
+    modal.remove();
+  }
+
+  function onKey(e) {
+    if (e.key === "Escape") close();
+  }
+
+  overlay.addEventListener("click", close);
+  modal.querySelector(".producto-modal-close").addEventListener("click", close);
+  document.addEventListener("keydown", onKey);
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(modal);
+}
+
+// Delegación: click en imagen de producto
+if (grid) {
+  grid.addEventListener("click", (e) => {
+    const img = e.target.closest("img.producto-img");
+    if (!img) return;
+
+    const id = img.dataset.id;
+    if (!id) return;
+
+    // Aquí asumo que tienes acceso al array "productos" en main.js
+    const producto = productos.find(p => p.id === id);
+    if (!producto) return;
+
+    openProductoDetalle(producto);
+  });
+}
+
+// helper escapeHtml si no lo tienes ya
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 
 
     // ======= INICIO =======
