@@ -25,4 +25,4 @@ export function mostrarNotificacion(card, mensaje) {
 
 // Constantes del carrito
 export const CART_KEY = "carrito_dawe_v1";
-export const CART_MAX_UNITS = 20;
+export const CART_MAX_UNITS_PRODUCT = 20;

@@ -1,5 +1,5 @@
 import { productos, getCart, saveCart, cartUnits, addToCart, decFromCart, incFromCart, removeLine, clearCart, agregarProducto } from './tienda.js';
-import { formatEUR, escapeHtml, CART_MAX_UNITS } from './utils.js';
+import { formatEUR, escapeHtml} from './utils.js';
 import { Novela } from './novela.js';
 import { CienciaFiccion } from './cienciaFiccion.js';
 import { Ensayo } from './ensayo.js';

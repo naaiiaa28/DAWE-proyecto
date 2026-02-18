@@ -3,7 +3,8 @@ import { CienciaFiccion } from './cienciaFiccion.js';
 import { Ensayo } from './ensayo.js';
 import { Infantil } from './infantil.js';
 import { Comic } from './comic.js';
-import { CART_KEY, CART_MAX_UNITS } from './utils.js';
+import { CART_KEY, CART_MAX_UNITS_PRODUCT} from './utils.js';
+import { Producto } from './producto.js';
 
 // Lista de productos de la tienda
 export const productos = [
@@ -56,26 +57,28 @@ export function cartUnits(cart) {
 }
 
 export function addToCart(productId, meta = {}) {
-    const cart = getCart();
-    if (cartUnits(cart) >= CART_MAX_UNITS) return { ok: false, reason: "full" };
+  const cart = getCart();
+  const item = cart.find((x) => x.id === productId);
+  const currentQty = item ? (Number(item.qty) || 0) : 0;
 
-    const item = cart.find((x) => x.id === productId);
-    if (item) {
-        item.qty = (Number(item.qty) || 0) + 1;
-    } else {
-        cart.push({
-            id: productId,
-            qty: 1,
-            name: meta.name || productId,
-            price: Number(meta.price) || 0,
-        });
-    }
+  if (currentQty >= CART_MAX_UNITS_PRODUCT) {    return { ok: false, reason: "max_per_product" };
+  }
 
-    if (cartUnits(cart) > CART_MAX_UNITS) return { ok: false, reason: "full" };
+  if (item) {
+    item.qty = currentQty + 1;
+  } else {
+    cart.push({
+      id: productId,
+      qty: 1,
+      name: meta.name || productId,
+      price: Number(meta.price) || 0,
+    });
+  }
 
-    saveCart(cart);
-    return { ok: true };
+  saveCart(cart);
+  return { ok: true };
 }
+
 
 export function decFromCart(productId) {
     const cart = getCart();
@@ -90,16 +93,22 @@ export function decFromCart(productId) {
 }
 
 export function incFromCart(productId) {
-    const cart = getCart();
-    if (cartUnits(cart) >= CART_MAX_UNITS) {
-        return { ok: false, reason: "full" };
-    }
-    const item = cart.find((x) => x.id === productId);
-    if (!item) return { ok: true };
-    item.qty = (Number(item.qty) || 0) + 1;
-    saveCart(cart);
-    return { ok: true };
+  const cart = getCart();
+  const item = cart.find((x) => x.id === productId);
+
+  if (!item) return { ok: true };
+
+  const currentQty = Number(item.qty) || 0;
+
+  if (currentQty >= CART_MAX_UNITS_PRODUCT) {
+    return { ok: false, reason: "max_per_product" };
+  }
+
+  item.qty = currentQty + 1;
+  saveCart(cart);
+  return { ok: true };
 }
+
 
 export function removeLine(productId) {
     const cart = getCart().filter((x) => x.id !== productId);

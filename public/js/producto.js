@@ -8,7 +8,7 @@ export class Producto {
 
     constructor(nombre, precio, descripcion, imagen = null) {
         // Generar ID único hasheando el nombre + timestamp
-        this.#id = this.#generarHash(nombre + Date.now());
+        this.#id = this.#generarHash(nombre + precio + descripcion);
         this.#nombre = nombre;
         this.#precio = precio;
         this.#descripcion = descripcion;
