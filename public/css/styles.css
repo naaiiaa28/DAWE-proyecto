@@ -158,23 +158,78 @@ footer {
 }
 
 /* BOTÓN CARRITO */
+.carrito-linea{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+
+.carrito-thumb{
+  width:52px;
+  height:52px;
+  object-fit:cover;
+  border-radius:6px;
+  border:1px solid rgba(0,0,0,.12);
+  flex:0 0 auto;
+}
+
+.carrito-info{
+  flex:1;
+}
+
+.carrito-nombre{
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.carrito-calc{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  font-size:0.95rem;
+  color:#333;
+}
+
+.carrito-qty{
+  width:56px;
+  padding:2px 6px;
+}
+
+.carrito-remove{
+  border:1px solid #dc3545;
+  background:#fff;
+  color:#dc3545;
+  border-radius:4px;
+  width:34px;
+  height:34px;
+  line-height:1;
+  font-size:18px;
+}
+
+.carrito-total-bar{
+  background: #6c757d;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 6px;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05rem;
+}
+
 .btn-carrito {
-    position: absolute;
-    background-color: #f5e0b7; /* tomate en lugar de azul */
-    border-color: #f5e0b7;
-    top: 10px;
-    right: 10px;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    padding: 0;
-    transition: background-color 0.3s;
+  border: 1px solid #f5e0b7 !important;
+  background-color: #f5e0b7 !important;
+  color: #41300f !important; /* para que el icono se vea */
 }
 
 .btn-carrito:hover {
-    background-color: #e5533d; /* un poco más oscuro al pasar el mouse */
-    border-color: #e5533d;
-    color: white;
+  border: 1px solid #f5e0b7 !important;
+  background-color: #e9d3a8 !important; /* opcional: hover suave */
+  color: #41300f !important;
 }
 
 /* MENSAJE "AÑADIDO" */

@@ -1,5 +1,5 @@
 import { productos, getCart, saveCart, cartUnits, addToCart, decFromCart, incFromCart, removeLine, clearCart, agregarProducto } from './tienda.js';
-import { formatEUR, escapeHtml} from './utils.js';
+import { formatEUR, escapeHtml, CART_MAX_UNITS_PRODUCT} from './utils.js';
 import { Novela } from './novela.js';
 import { CienciaFiccion } from './cienciaFiccion.js';
 import { Ensayo } from './ensayo.js';
@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!elItems || !elVacio) return;
 
         const cart = getCart();
-        const units = cartUnits(cart);
 
         if (cart.length === 0) {
             elVacio.classList.remove("d-none");
@@ -74,36 +73,34 @@ document.addEventListener("DOMContentLoaded", () => {
         elVacio.classList.add("d-none");
 
         let total = 0;
-        elItems.innerHTML = cart
-            .map((it) => {
-                const price = Number(it.price) || 0;
-                const qty = Number(it.qty) || 0;
-                const sub = price * qty;
-                total += sub;
 
-                return `
-                    <div class="carrito-item" data-id="${escapeHtml(it.id)}">
-                        <div class="d-flex justify-content-between align-items-start gap-2">
-                            <div>
-                                <div class="fw-semibold">${escapeHtml(it.name || it.id)}</div>
-                                <div class="text-muted small">
-                                    ${formatEUR(price)} · Subtotal: ${formatEUR(sub)}
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" data-action="remove" type="button">✕</button>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 mt-2">
-                            <button class="btn btn-outline-secondary btn-sm" data-action="dec" type="button">-</button>
-                            <span class="fw-semibold">${qty}</span>
-                            <button class="btn btn-outline-secondary btn-sm" data-action="inc" type="button">+</button>
-                        </div>
-                    </div>
-                `;
-            })
-            .join("");
+        elItems.innerHTML = cart.map((it) => {
+            const price = Number(it.price) || 0;
+            const qty = Number(it.qty) || 0;
+            const sub = price * qty;
+            total += sub;
+
+            return `
+            <div class="carrito-linea" data-id="${escapeHtml(it.id)}">
+                <img class="carrito-thumb" src="${escapeHtml(it.img || '')}" alt="${escapeHtml(it.name || it.id)}">
+
+                <div class="carrito-info">
+                <div class="carrito-nombre">${escapeHtml(it.name || it.id)}</div>
+                <div class="carrito-calc">
+                    ${formatEUR(price)} ×
+                    <input class="carrito-qty" type="number" min="1" value="${qty}">
+                    = <strong>${formatEUR(sub)}</strong>
+                </div>
+                </div>
+
+                <button class="carrito-remove" data-action="remove" type="button" title="Eliminar">×</button>
+            </div>
+            `;
+        }).join("");
 
         if (elTotal) elTotal.textContent = formatEUR(total);
-    }
+        }
+
 
     if (linkCarrito && offcanvas) {
         linkCarrito.addEventListener("click", (e) => {
@@ -114,27 +111,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (elItems) {
+
+        // Eliminar con la X
         elItems.addEventListener("click", (e) => {
-            const btn = e.target.closest("button[data-action]");
+            const btn = e.target.closest("button[data-action='remove']");
             if (!btn) return;
 
-            const itemEl = e.target.closest(".carrito-item");
+            const itemEl = e.target.closest(".carrito-linea");
             if (!itemEl) return;
 
-            const id = itemEl.dataset.id;
-            const action = btn.dataset.action;
+            removeLine(itemEl.dataset.id);
+            updateBadge();
+            renderCartUI();
+        });
 
-            if (action === "inc") {
-                const result = incFromCart(id);
-                if (!result.ok) showToast("Carrito lleno (máx. 20).", false);
+        // Cambiar cantidad con el input number
+        elItems.addEventListener("input", (e) => {
+            const input = e.target.closest(".carrito-qty");
+            if (!input) return;
+
+            const itemEl = e.target.closest(".carrito-linea");
+            if (!itemEl) return;
+
+            let qty = Math.max(1, Math.floor(Number(input.value) || 1));
+
+            // ✅ límite por producto (usa tu constante)
+            if (qty > CART_MAX_UNITS_PRODUCT) {
+            qty = CART_MAX_UNITS_PRODUCT;
+            input.value = String(qty);
+            showToast(`Máximo ${CART_MAX_UNITS_PRODUCT} por producto`, false);
             }
-            if (action === "dec") decFromCart(id);
-            if (action === "remove") removeLine(id);
+
+            const cart = getCart();
+            const item = cart.find(x => x.id === itemEl.dataset.id);
+            if (!item) return;
+
+            item.qty = qty;
+            saveCart(cart);
 
             updateBadge();
             renderCartUI();
         });
-    }
+        }
 
     if (btnVaciar) btnVaciar.addEventListener("click", () => { clearCart(); updateBadge(); renderCartUI(); showToast("Carrito vaciado."); });
     if (btnFinalizar) btnFinalizar.addEventListener("click", () => { clearCart(); updateBadge(); renderCartUI(); showToast("Compra finalizada (simulación) ✅", true); });
@@ -178,8 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p class="card-text">${escapeHtml(p.descripcion)}</p>
                     <p>Precio: ${formatEUR(p.precio)}</p>
                     <p class="text-muted small">${escapeHtml(extraInfo)}</p>
-                    <button class="btn btn-primary position-absolute top-0 end-0 m-2 btn-carrito"
-                        data-id="${p.id}" data-name="${escapeHtml(p.nombre)}" data-price="${p.precio}">
+                    <button class="btn btn-success position-absolute top-0 end-0 m-2 btn-carrito"
+                        data-id="${p.id}" data-name="${escapeHtml(p.nombre)}" data-price="${p.precio}" data-img="${p.imagen}">
                         🛒
                     </button>
                 </div>
@@ -232,8 +250,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const id = btn.dataset.id;
         const name = btn.dataset.name;
         const price = btn.dataset.price;
+        const img = btn.dataset.img;
 
-        const result = addToCart(id, { name, price });
+        const result = addToCart(id, { name, price, img });
         if (result.ok) {
             showButtonToast(btn,"Añadido al carrito ✓", true);
             updateBadge();

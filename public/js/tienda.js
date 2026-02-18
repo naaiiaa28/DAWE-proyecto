@@ -61,17 +61,23 @@ export function addToCart(productId, meta = {}) {
   const item = cart.find((x) => x.id === productId);
   const currentQty = item ? (Number(item.qty) || 0) : 0;
 
-  if (currentQty >= CART_MAX_UNITS_PRODUCT) {    return { ok: false, reason: "max_per_product" };
+  if (currentQty >= CART_MAX_UNITS_PRODUCT) {  return { ok: false, reason: "max_per_product" };
   }
 
   if (item) {
     item.qty = currentQty + 1;
+
+    if (!item.name && meta.name) item.name = meta.name;
+    if ((!item.price || item.price === 0) && meta.price) item.price = Number(meta.price) || 0;
+    if (!item.img && meta.img) item.img = meta.img;
+
   } else {
     cart.push({
       id: productId,
       qty: 1,
       name: meta.name || productId,
       price: Number(meta.price) || 0,
+      img: meta.img || "",
     });
   }
 

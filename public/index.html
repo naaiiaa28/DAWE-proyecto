@@ -138,11 +138,29 @@
     <h5 class="offcanvas-title" id="offcanvasCarritoLabel">Carrito</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
   </div>
-  <div class="offcanvas-body">
-    <div id="carrito-vacio" class="alert alert-info">Tu carrito está vacío.</div>
-    <div id="carrito-items" class="d-flex flex-column gap-2"></div>
+
+  <div class="offcanvas-body d-flex flex-column">
+    <!-- Resumen (opcional, si lo pintas desde JS) -->
+    <p id="carrito-resumen" class="text-muted mb-2"></p>
+
+    <div id="carrito-vacio" class="alert alert-info">
+      Tu carrito está vacío.
+    </div>
+
+    <!-- Items -->
+    <div id="carrito-items" class="d-flex flex-column gap-2 flex-grow-1"></div>
+
+    <!-- Total estilo "Mario" -->
+    <div class="carrito-total-bar mt-3">
+      <span>Total:</span>
+      <strong id="carrito-total">€ 0.00</strong>
+    </div>
+
+    <!-- Toast (si lo usas desde JS) -->
+    <div id="carrito-toast" class="alert d-none mt-3 mb-0"></div>
   </div>
 </div>
+
 
 </body>
 </html>
