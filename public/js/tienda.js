@@ -146,7 +146,6 @@ export function agregarProducto(data) {
             instancia = new Novela(nombre, precio, descripcion, imagen, extra);
             break;
         case 'ciencia':
-        case 'ciencia ficción':
             instancia = new CienciaFiccion(nombre, precio, descripcion, imagen, extra);
             break;
         case 'ensayo':

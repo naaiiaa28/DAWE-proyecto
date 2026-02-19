@@ -7,7 +7,7 @@ import { Infantil } from './infantil.js';
 import { Comic } from './comic.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-    // ======= ELEMENTOS HTML =======
+    // elementos del index.html  que necesitamos recoger
     const tipoLibro = document.getElementById("tipo-libro");
     const campoExtra = document.getElementById("campo-extra");
     const inputExtra = document.getElementById("extra");
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputImagen = document.getElementById("imagen-libro");
     const mensajes = document.getElementById("mensajes-form");
 
-    const IMAGEN_DEFAULT = 'imagenes/imagesNotFound.png';
+    const IMAGEN_DEFAULT = 'imagenes/INF.png';
 
     const grid = document.getElementById('grid-productos');
     const buscador = document.getElementById('buscador');
@@ -27,13 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let paginaActual = 1;
     const productosPorPagina = 6;
 
-    // ======= FUNCIONES AUXILIARES =======
+    // Actualizar el contados de productos 
 
     function actualizarContador(mostrando, total) {
         contador.textContent = `Mostrando ${mostrando} de ${total} productos`;
     }
 
-    // ======= ELEMENTOS CARRITO =======
+    // =cosas del carrito
     const linkCarrito = document.getElementById("link-carrito");
     const badgeCount = document.getElementById("cart-count");
     const elVacio = document.getElementById("carrito-vacio");
@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ? bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl)
             : null;
 
+    //funcion de mostrar mensajes del carrito
     function showToast(msg, ok = true) {
         if (!toast) return;
         toast.classList.remove("d-none", "alert-success", "alert-danger");
@@ -139,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let qty = Math.max(1, Math.floor(Number(input.value) || 1));
 
-            // ✅ límite por producto (usa tu constante)
+            // limitacion de productos (20 por producto)
             if (qty > CART_MAX_UNITS_PRODUCT) {
             qty = CART_MAX_UNITS_PRODUCT;
             input.value = String(qty);
@@ -163,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateBadge();
 
-    // ======= FUNCIONALIDAD PRODUCTOS =======
+    // colocar productos en pantalla 
 
     function mostrarProductos() {
         const filtro = buscador.value.trim().toLowerCase();
@@ -192,20 +193,29 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (p.editor) extraInfo = `Editor: ${p.editor}`;
             else if (p.edadRecomendada) extraInfo = `Edad: ${p.edadRecomendada}`;
             else if (p.ilustrador) extraInfo = `Ilustrador: ${p.ilustrador}`;
+            else if (p.CienciaFiccion) extraInfo = `Campo de estudio: ${p.campo}`;
 
             card.innerHTML = `
-                <div class="card-body position-relative">
-                    <img src="${p.imagen}" class="card-img-top producto-img" data-id="${p.id}" alt="${escapeHtml(p.nombre)}">
+                <div class="card-body position-relative d-flex flex-column h-100">
+                    <img src="${p.imagen}" 
+                        class="card-img-top producto-img" 
+                        data-id="${p.id}" 
+                        alt="${escapeHtml(p.nombre)}">
                     <h5 class="card-title">${escapeHtml(p.nombre)}</h5>
-                    <p class="card-text">${escapeHtml(p.descripcion)}</p>
-                    <p>Precio: ${formatEUR(p.precio)}</p>
-                    <p class="text-muted small">${escapeHtml(extraInfo)}</p>
+                    <p class="precio mb-1">${formatEUR(p.precio)}</p>
+                    <p class="text-muted small mb-2">${escapeHtml(extraInfo)}</p>
+                    <p class="card-text flex-grow-1">${escapeHtml(p.descripcion)}</p>
                     <button class="btn btn-success position-absolute top-0 end-0 m-2 btn-carrito"
-                        data-id="${p.id}" data-name="${escapeHtml(p.nombre)}" data-price="${p.precio}" data-img="${p.imagen}">
+                        data-id="${p.id}" 
+                        data-name="${escapeHtml(p.nombre)}" 
+                        data-price="${p.precio}" 
+                        data-img="${p.imagen}">
                         🛒
                     </button>
+
                 </div>
             `;
+
 
 
             col.appendChild(card);
@@ -214,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         generarPaginacion(filtrados.length);
     }
-
+    //para crear la paginacion de productos
     function generarPaginacion(total) {
         paginacion.innerHTML = '';
         const totalPaginas = Math.ceil(total / productosPorPagina);
@@ -246,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     buscador.addEventListener('input', () => { paginaActual = 1; mostrarProductos(); });
 
-    // Event delegation para botones de carrito
+    // boton carrito
     grid.addEventListener('click', (e) => {
         const btn = e.target.closest('.btn-carrito');
         if (!btn) return;
@@ -265,10 +275,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-/* ===========================
-   MENSAJES
-=========================== */
 
+//mensajes de añadido al carrito
 function mostrarMensaje(texto, ok = true) {
     mensajes.textContent = texto;
     mensajes.className = "mt-3 alert";
@@ -280,10 +288,8 @@ function mostrarMensaje(texto, ok = true) {
     }, 2000);
 }
 
-/* ===========================
-   CAMPO EXTRA DINÁMICO
-=========================== */
 
+//campo extra de los productos
 if (tipoLibro) {
     tipoLibro.addEventListener("change", () => {
 
@@ -319,16 +325,46 @@ if (tipoLibro) {
     });
 }
 
+//drag drop 
 const dropZone = document.getElementById("drop-zone");
 const dropText = document.getElementById("dropText");
 
 const placeholderText = "Arrastra aquí la imagen del libro";
 const successText = "¡elemento añadido!";
 let archivoDrop = null;
+let archivoInput = null;
 
-// =====================================================
-//  MUY IMPORTANTE: evitar que el navegador abra el archivo
-// =====================================================
+function setImagen(file, origen) {
+    if (!file) return;
+
+    if (origen === "drop") {
+        archivoDrop = file;
+        archivoInput = null;
+
+        // limpiar y bloquear input file
+        if (inputImagen) {
+            inputImagen.value = "";
+            inputImagen.disabled = true;
+        }
+
+        dropText.textContent = "Imagen cargada (drag & drop)";
+    }
+
+    if (origen === "input") {
+        archivoInput = file;
+        archivoDrop = null;
+
+        // por si estaba bloqueado antes
+        if (inputImagen) {
+            inputImagen.disabled = false;
+        }
+
+        dropText.textContent = "Imagen cargada (input)";
+    }
+}
+
+
+
 ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
     document.addEventListener(eventName, (e) => {
         e.preventDefault();
@@ -336,54 +372,63 @@ let archivoDrop = null;
     });
 });
 
-// =====================================================
-// DRAG OVER EN LA ZONA
-// =====================================================
+
 dropZone.addEventListener("dragover", () => {
     dropZone.classList.add("dragover");
 });
 
-// =====================================================
-// DRAG ENTER (mejora la detección)
-// =====================================================
+
 dropZone.addEventListener("dragenter", () => {
     dropZone.classList.add("dragover");
 });
 
-// =====================================================
-// DRAG LEAVE
-// =====================================================
+
 dropZone.addEventListener("dragleave", (e) => {
-    // 👇 evita falsos dragleave al pasar por hijos
     if (!dropZone.contains(e.relatedTarget)) {
         dropZone.classList.remove("dragover");
     }
 });
 
-// =====================================================
-// DROP
-// =====================================================
+//cuando sueltas la imagen 
 dropZone.addEventListener("drop", (e) => {
     dropZone.classList.remove("dragover");
-    dropZone.classList.add("success");
 
     const files = e.dataTransfer.files;
 
-    if (files && files.length > 0) {
-        dropText.textContent = successText;
-        archivoDrop = files[0]; 
+    //si ya hay imagen por input se bloquea
+    if (archivoInput) {
+        mostrarMensaje("Ya hay una imagen seleccionada", false);
+        return;
     }
 
-    setTimeout(() => {
-        dropZone.classList.remove("success");
-        dropText.textContent = placeholderText;
-    }, 1500);
+    if (files && files.length > 0) {
+        dropZone.classList.add("success");
+        setImagen(files[0], "drop");
+        setTimeout(() => {
+            dropZone.classList.remove("success");
+        }, 1500);
+    }
 });
 
+//mas comprobaciones de si ya hay imagenes en uno de los dos
+if (inputImagen) {
+    inputImagen.addEventListener("change", () => {
+        if (!inputImagen.files.length) return;
 
-/* ===========================
-   ENVÍO FORMULARIO
-=========================== */
+        
+        if (archivoDrop) {
+            mostrarMensaje("Ya hay una imagen cargada por drag & drop", false);
+            inputImagen.value = "";
+            return;
+        }
+
+        setImagen(inputImagen.files[0], "input");
+    });
+}
+
+
+
+//formulario del aside y sus comprobaciones
 
 if (formLibro) {
 
@@ -420,12 +465,9 @@ if (formLibro) {
 
         let imagenFinal = IMAGEN_DEFAULT;
 
-        // prioridad 1 → input file
-        if (inputImagen && inputImagen.files.length > 0) {
-            imagenFinal = URL.createObjectURL(inputImagen.files[0]);
-        }
-        // prioridad 2 → drag & drop
-        else if (archivoDrop) {
+        if (archivoInput) {
+            imagenFinal = URL.createObjectURL(archivoInput);
+        } else if (archivoDrop) {
             imagenFinal = URL.createObjectURL(archivoDrop);
         }
 
@@ -455,6 +497,14 @@ if (formLibro) {
 
         formLibro.reset();
         campoExtra.classList.add("d-none");
+
+        // limpiar estado de imágenes
+        archivoDrop = null;
+        archivoInput = null;
+
+        if (inputImagen) inputImagen.disabled = false;
+        dropText.textContent = placeholderText;
+
 
         mostrarMensaje("Libro añadido correctamente ✔", true);
     });
@@ -488,10 +538,10 @@ function showButtonToast(btn, msg, ok = true) {
 }
 
 function getExtraInfo(producto) {
-  // Ajusta esto según tus clases si usas getters.
-  // Intento “inteligente” para tus tipos:
+  
   return (
     producto.autor ||
+    producto.campo||
     producto.editor ||
     producto.editorial ||
     producto.edad ||
@@ -514,7 +564,6 @@ function openProductoDetalle(producto) {
 
   const extra = getExtraInfo(producto);
 
-  // (si quieres probar scroll) producto.descripcion.repeat(10)
   const descripcionLarga = String(producto.descripcion ?? "").repeat(1);
 
   modal.innerHTML = `
@@ -527,7 +576,7 @@ function openProductoDetalle(producto) {
     <div class="producto-modal-der">
       <h3>${escapeHtml(producto.nombre)} — € ${Number(producto.precio).toFixed(2)}</h3>
 
-      ${extra ? `<div class="producto-modal-meta"><strong>Extra:</strong> ${escapeHtml(extra)}</div>` : ""}
+      ${extra ? `<div class="producto-modal-meta"><strong>${escapeHtml(extra.label)}:</strong> ${escapeHtml(extra)}</div>` : ""}
 
       <div class="producto-modal-meta"><strong>Descripción:</strong></div>
       <p style="margin:0; white-space: pre-wrap;">${escapeHtml(descripcionLarga)}</p>

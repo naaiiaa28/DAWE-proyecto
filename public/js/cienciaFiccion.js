@@ -1,18 +1,18 @@
 import { Producto } from './producto.js';
 
 export class CienciaFiccion extends Producto {
-    #autor;
+    #campo;
 
-    constructor(nombre, precio, descripcion, imagen, autor) {
+    constructor(nombre, precio, descripcion, imagen, campo) {
         super(nombre, precio, descripcion, imagen);
-        this.#autor = autor;
+        this.#campo = campo;
     }
 
-    get autor() {
-        return this.#autor;
+    get campo() {
+        return this.#campo;
     }
 
-    set autor(value) {
-        this.#autor = value;
+    set campo(value) {
+        this.#campo = value;
     }
 }

@@ -86,7 +86,6 @@ aside {
     padding: 20px;      
     box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* ligera sombra para resaltar */
     border: 3px solid #4B2E2E; /* Marrón oscuro */
-    border-radius: 15px;       /* Esquinas redondeadas */
 }
 
 
@@ -423,4 +422,59 @@ nav ul.pagination .page-item.active .page-link {
 .producto-modal-meta strong {
   display: inline-block;
   min-width: 90px;
+}
+
+/* ===== GRID CARDS IGUALES ===== */
+
+#grid-productos .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* cuerpo de la card ocupa todo */
+#grid-productos .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ===== IMAGEN ===== */
+
+.producto-img {
+    height: 220px;          /* 🔧 mismo alto para todas */
+    object-fit: contain;    /* o cover si prefieres */
+    margin-bottom: 12px;    /* 👈 separa de arriba */
+    padding-top: 8px;       /* 👈 que no esté pegada */
+}
+
+/* ===== TITULO ===== */
+
+.card-title {
+    font-size: 1.05rem;
+    min-height: 2.6em;      /* 👈 iguala alturas de títulos */
+}
+
+/* ===== PRECIO ===== */
+
+.precio {
+    font-weight: 700;
+    color: #000000;
+}
+
+/* ===== DESCRIPCIÓN FLEX ===== */
+
+.card-text {
+    font-size: 0.9rem;
+}
+
+/* ===== HOVER PRO (opcional pero bonito) ===== */
+
+#grid-productos .card {
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+#grid-productos .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,.12);
 }
