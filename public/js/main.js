@@ -7,7 +7,10 @@ import { Infantil } from './infantil.js';
 import { Comic } from './comic.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-    // elementos del index.html  que necesitamos recoger
+    // Reiniciar el carrito al cargar la página
+    clearCart();
+
+    // Elementos del index.html  que necesitamos recoger
     const tipoLibro = document.getElementById("tipo-libro");
     const campoExtra = document.getElementById("campo-extra");
     const inputExtra = document.getElementById("extra");
@@ -27,13 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let paginaActual = 1;
     const productosPorPagina = 6;
 
-    // Actualizar el contados de productos 
 
     function actualizarContador(mostrando, total) {
         contador.textContent = `Mostrando ${mostrando} de ${total} productos`;
     }
 
-    // =cosas del carrito
+    // Cosas del carrito
     const linkCarrito = document.getElementById("link-carrito");
     const badgeCount = document.getElementById("cart-count");
     const elVacio = document.getElementById("carrito-vacio");
@@ -49,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ? bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl)
             : null;
 
-    //funcion de mostrar mensajes del carrito
+    // Funcion de mostrar mensajes del carrito
     function showToast(msg, ok = true) {
         if (!toast) return;
         toast.classList.remove("d-none", "alert-success", "alert-danger");

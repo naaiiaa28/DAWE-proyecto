@@ -34,10 +34,8 @@ export const productos = [
     new Comic('V de Vendetta', 26.00, 'Thriller político de Alan Moore', 'imagenes/V-d-eVendetta.jpg', 'David Lloyd')
 ];
 
-// Carrito de la compra (inicialmente vacío)
 export let carrito = [];
 
-// Funciones relacionadas con el carrito
 export function getCart() {
     try {
         const raw = localStorage.getItem(CART_KEY);
