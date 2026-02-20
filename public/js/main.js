@@ -5,6 +5,7 @@ import { CienciaFiccion } from './cienciaFiccion.js';
 import { Ensayo } from './ensayo.js';
 import { Infantil } from './infantil.js';
 import { Comic } from './comic.js';
+import { getFavorites, toggleFavorite, isFavorite, favoritesCount } from "./favoritos.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // Reiniciar el carrito al cargar la página
@@ -216,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     updateBadge();
-
+    updateFavBadge();
     // colocar productos en pantalla 
 
     function mostrarProductos() {
@@ -264,6 +265,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         data-price="${p.precio}" 
                         data-img="${p.imagen}">
                         🛒
+                    </button>
+                    <button class="btn btn-warning position-absolute top-0 start-0 m-2 btn-favorito"
+                        data-id="${p.id}"
+                        aria-pressed="${isFavorite(p.id) ? "true" : "false"}">
+                        ${isFavorite(p.id) ? "★" : "☆"}
                     </button>
 
                 </div>
@@ -326,6 +332,22 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             showButtonToast(btn,"Carrito lleno (máx. 20).", false);
         }
+    });
+    grid.addEventListener("click", (e) => {
+        const btnFav = e.target.closest(".btn-favorito");
+        if (!btnFav) return;
+
+        const id = btnFav.dataset.id;
+        const producto = productos.find(p => p.id === id);
+        if (!producto) return;
+
+        const marcado = toggleFavorite(producto);
+        updateFavBadge();
+
+        // UI estrella
+        btnFav.classList.toggle("active", marcado);
+        btnFav.setAttribute("aria-pressed", marcado ? "true" : "false");
+        btnFav.textContent = marcado ? "★" : "☆";
     });
 
 
@@ -725,50 +747,96 @@ if (inputCupon) {
     if (e.key === "Enter") applyCoupon();
   });
 }
+
+// ===== FAVORITOS UI =====
+const badgeFav = document.getElementById("fav-count");
+const linkFavoritos = document.getElementById("link-favoritos");
+const favVacio = document.getElementById("favoritos-vacio");
+const favItems = document.getElementById("favoritos-items");
+
+const offFavEl = document.getElementById("offcanvasFavoritos");
+const offFav =
+  offFavEl && window.bootstrap
+    ? bootstrap.Offcanvas.getOrCreateInstance(offFavEl)
+    : null;
+
+function updateFavBadge() {
+  if (!badgeFav) return;
+  badgeFav.textContent = String(favoritesCount());
+}
+
+function renderFavoritesUI() {
+  if (!favItems || !favVacio) return;
+
+  const favs = getFavorites();
+
+  if (favs.length === 0) {
+    favVacio.classList.remove("d-none");
+    favItems.innerHTML = "";
+    return;
+  }
+
+  favVacio.classList.add("d-none");
+
+  favItems.innerHTML = favs.map((p) => `
+    <div class="carrito-linea" data-id="${escapeHtml(p.id)}">
+      <img class="carrito-thumb" src="${escapeHtml(p.imagen || '')}" alt="${escapeHtml(p.nombre || p.id)}">
+      <div class="carrito-info">
+        <div class="carrito-nombre">${escapeHtml(p.nombre || p.id)}</div>
+        <div class="carrito-calc">${formatEUR(p.precio)}</div>
+      </div>
+      <button class="carrito-remove" data-action="unfav" type="button" title="Quitar de favoritos">×</button>
+    </div>
+  `).join("");
+}
+
+if (linkFavoritos && offFav) {
+  linkFavoritos.addEventListener("click", (e) => {
+    e.preventDefault();
+    renderFavoritesUI();
+    updateFavBadge();
+    offFav.show();
+  });
+}
+
+if (favItems) {
+  favItems.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action='unfav']");
+    if (!btn) return;
+
+    const row = e.target.closest("[data-id]");
+    if (!row) return;
+
+    const id = row.dataset.id;
+
+    const producto = productos.find(p => p.id === id);
+    if (!producto) {
+      // si no lo encontramos, lo quitamos del DOM y luego podríamos limpiar storage con otra función
+      row.remove();
+      updateFavBadge();
+      return;
+    }
+
+    toggleFavorite(producto); // lo desmarca
+    renderFavoritesUI();
+    updateFavBadge();
+    // También actualiza estrellas en el grid:
+    refreshFavoriteStars();
+  });
+}
+function refreshFavoriteStars() {
+  if (!grid) return;
+  grid.querySelectorAll(".btn-favorito").forEach((btn) => {
+    const id = btn.dataset.id;
+    const fav = isFavorite(id);
+    btn.classList.toggle("active", fav);
+    btn.setAttribute("aria-pressed", fav ? "true" : "false");
+    btn.textContent = fav ? "★" : "☆";
+  });
+}
+
 // ======= INICIO =======
     mostrarProductos();
 });
 
-// Favoritos y cupones
-const favoritos = [];
 
-function toggleFavorito(producto) {
-  const index = favoritos.findIndex(fav => fav.id === producto.id);
-  if (index === -1) {
-    favoritos.push(producto);
-    actualizarFavoritos();
-    return true;
-  } else {
-    favoritos.splice(index, 1);
-    actualizarFavoritos();
-    return false;
-  }
-}
-
-function actualizarFavoritos() {
-  const listaFavoritos = document.getElementById('lista-favoritos');
-  listaFavoritos.innerHTML = '';
-  favoritos.forEach(producto => {
-    const li = document.createElement('li');
-    li.textContent = producto.nombre;
-    const botonEliminar = document.createElement('button');
-    botonEliminar.textContent = 'Eliminar';
-    botonEliminar.addEventListener('click', () => {
-      toggleFavorito(producto);
-    });
-    li.appendChild(botonEliminar);
-    listaFavoritos.appendChild(li);
-  });
-}
-
-// Event listeners
-const botonFavoritos = document.getElementById('abrir-favoritos');
-const botonCerrarFavoritos = document.getElementById('cerrar-favoritos');
-
-botonFavoritos.addEventListener('click', () => {
-  document.getElementById('favoritos').classList.add('open');
-});
-
-botonCerrarFavoritos.addEventListener('click', () => {
-  document.getElementById('favoritos').classList.remove('open');
-});

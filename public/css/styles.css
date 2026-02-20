@@ -497,3 +497,9 @@ nav ul.pagination .page-item.active .page-link {
     transform: translateY(-4px);
     box-shadow: 0 8px 18px rgba(0,0,0,.12);
 }
+
+.btn-favorito.active {
+  background-color: #ffd24d !important;
+  border-color: #ffd24d !important;
+  color: #5a3825 !important;
+}

@@ -27,6 +27,11 @@
         <ul>
             <li><a href="index.html">Inicio</a></li>
             <li>
+                <a href="#" id="link-favoritos" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFavoritos" aria-controls="offcanvasFavoritos">
+                    Favoritos <span id="fav-count" class="badge bg-warning text-dark">0</span>
+            </a>
+        </li> 
+            <li>
                 <a href="#" id="link-carrito" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCarrito" aria-controls="offcanvasCarrito">
                     Carrito <span id="cart-count" class="badge bg-success">0</span>
                 </a>
@@ -132,6 +137,25 @@
 
 <!-- JS propio -->
 <script type="module" src="js/main.js"></script>
+
+<!-- OFFCANVAS FAVORITOS -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasFavoritos" aria-labelledby="offcanvasFavoritosLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasFavoritosLabel">Favoritos</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="offcanvas-body d-flex flex-column">
+    <div id="favoritos-vacio" class="alert alert-info">
+      No tienes favoritos.
+    </div>
+
+    <div id="favoritos-items" class="d-flex flex-column gap-2 flex-grow-1"></div>
+
+    <div id="favoritos-toast" class="alert d-none mt-3 mb-0"></div>
+  </div>
+</div>
+
 <!-- OFFCANVAS CARRITO -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCarrito" aria-labelledby="offcanvasCarritoLabel">
   <div class="offcanvas-header">
