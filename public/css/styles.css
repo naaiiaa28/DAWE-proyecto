@@ -485,32 +485,48 @@ nav ul.pagination .page-item.active .page-link {
 /* FAVORITOS */
 #favoritos {
   position: fixed;
-  right: -300px;
+  right: -400px;
   top: 0;
-  width: 300px;
+  width: 400px;
   height: 100%;
-  background-color: #f4f4f4;
+  background-color: #fff;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
   overflow-y: auto;
   transition: right 0.3s ease;
-  z-index: 1000;
+  z-index: 1050;
 }
 #favoritos.open {
   right: 0;
 }
-#favoritos h2 {
-  text-align: center;
+#favoritos .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
-  background-color: #333;
+  background-color: #343a40;
   color: #fff;
+}
+#favoritos .panel-header h2 {
+  margin: 0;
+}
+#favoritos .cerrar-panel {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
 }
 #favoritos ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 #favoritos ul li {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .estrella-favorito {
   background: none;

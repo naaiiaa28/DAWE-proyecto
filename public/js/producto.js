@@ -103,7 +103,13 @@ function renderizarProducto(producto) {
   botonCarrito.textContent = 'Añadir al carrito';
   botonCarrito.addEventListener('click', () => addToCart(producto.id, producto));
 
-  const botonEstrella = agregarEstrellaFavorito(producto);
+  const botonEstrella = document.createElement('button');
+  botonEstrella.classList.add('estrella-favorito');
+  botonEstrella.textContent = '★';
+  botonEstrella.addEventListener('click', () => {
+    const marcado = toggleFavorito(producto);
+    botonEstrella.classList.toggle('marcada', marcado);
+  });
 
   divProducto.append(img, h3, p, span, botonCarrito, botonEstrella);
   return divProducto;

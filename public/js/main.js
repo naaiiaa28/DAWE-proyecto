@@ -657,40 +657,19 @@ function actualizarFavoritos() {
   favoritos.forEach(producto => {
     const li = document.createElement('li');
     li.textContent = producto.nombre;
+    const botonEliminar = document.createElement('button');
+    botonEliminar.textContent = 'Eliminar';
+    botonEliminar.addEventListener('click', () => {
+      toggleFavorito(producto);
+    });
+    li.appendChild(botonEliminar);
     listaFavoritos.appendChild(li);
   });
-}
-
-function aplicarCupon(codigo) {
-  const descuento = verificarCupon(codigo);
-  if (descuento) {
-    const productoCupon = {
-      id: `cupon-${codigo}`,
-      name: `Cupón: ${codigo}`,
-      price: -descuento,
-      qty: 1
-    };
-    addToCart(productoCupon.id, productoCupon);
-    showToast(`Cupón aplicado: ${codigo} - Descuento: €${descuento}`, true);
-    updateBadge();
-    renderCartUI();
-  } else {
-    showToast('Cupón inválido', false);
-  }
-}
-
-function verificarCupon(codigo) {
-  const cupones = {
-    'DESCUENTO10': 10,
-    'DESCUENTO20': 20
-  };
-  return cupones[codigo] || null;
 }
 
 // Event listeners
 const botonFavoritos = document.getElementById('abrir-favoritos');
 const botonCerrarFavoritos = document.getElementById('cerrar-favoritos');
-const botonCupon = document.getElementById('aplicar-cupon');
 
 botonFavoritos.addEventListener('click', () => {
   document.getElementById('favoritos').classList.add('open');
@@ -698,9 +677,4 @@ botonFavoritos.addEventListener('click', () => {
 
 botonCerrarFavoritos.addEventListener('click', () => {
   document.getElementById('favoritos').classList.remove('open');
-});
-
-botonCupon.addEventListener('click', () => {
-  const codigo = document.getElementById('input-cupon').value;
-  aplicarCupon(codigo);
 });
