@@ -678,3 +678,53 @@ botonFavoritos.addEventListener('click', () => {
 botonCerrarFavoritos.addEventListener('click', () => {
   document.getElementById('favoritos').classList.remove('open');
 });
+
+// Function to handle adding a product to favorites
+function addToFavorites(productId) {
+    const favoritos = document.getElementById('favoritos');
+    const favoritosList = favoritos.querySelector('ul');
+
+    // Create a new list item for the favorite product
+    const listItem = document.createElement('li');
+    listItem.textContent = `Producto ${productId}`;
+
+    // Add a remove button
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'X';
+    removeButton.classList.add('cerrar-panel');
+    removeButton.onclick = () => listItem.remove();
+
+    listItem.appendChild(removeButton);
+    favoritosList.appendChild(listItem);
+
+    // Open the favorites aside
+    favoritos.classList.add('open');
+}
+
+// Function to toggle the favorites aside
+function toggleFavorites() {
+    const favoritos = document.getElementById('favoritos');
+    favoritos.classList.toggle('open');
+}
+
+// Function to apply coupon
+function applyCoupon() {
+    const couponInput = document.getElementById('cupon-input');
+    const couponCode = couponInput.value.trim();
+
+    if (couponCode === 'DESCUENTO10') {
+        const carrito = document.getElementById('carrito');
+        const descuentoItem = document.createElement('div');
+        descuentoItem.classList.add('carrito-linea');
+        descuentoItem.innerHTML = `
+            <div class="carrito-info">
+                <div class="carrito-nombre">Descuento aplicado</div>
+                <div class="carrito-calc">-10€</div>
+            </div>
+        `;
+        carrito.appendChild(descuentoItem);
+        alert('¡Cupón aplicado con éxito!');
+    } else {
+        alert('Cupón no válido.');
+    }
+}

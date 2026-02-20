@@ -234,6 +234,22 @@ footer {
   color: #41300f !important;
 }
 
+/* Botón de estrella para favoritos */
+.btn-favorito {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #f5e0b7 !important;
+  background-color: #f5e0b7 !important;
+  color: #41300f !important; /* para que el icono se vea */
+  border-radius: 50%;
+}
+
+.btn-favorito:hover {
+  border: 1px solid #f5e0b7 !important;
+  background-color: #e9d3a8 !important; /* hover suave */
+  color: #41300f !important;
+}
+
 /* MENSAJE "AÑADIDO" */
 .mensaje-carrito {
     position: absolute;
