@@ -679,51 +679,64 @@ botonCerrarFavoritos.addEventListener('click', () => {
   document.getElementById('favoritos').classList.remove('open');
 });
 
-// Function to handle adding a product to favorites
-function addToFavorites(productId) {
+// Function to handle adding/removing a product to/from favorites
+function toggleFavorite(productId, productName) {
     const favoritos = document.getElementById('favoritos');
     const favoritosList = favoritos.querySelector('ul');
+    const existingItem = favoritosList.querySelector(`[data-id="${productId}"]`);
 
-    // Create a new list item for the favorite product
-    const listItem = document.createElement('li');
-    listItem.textContent = `Producto ${productId}`;
+    if (existingItem) {
+        // Remove the product if it already exists in favorites
+        existingItem.remove();
+    } else {
+        // Add the product to favorites
+        const listItem = document.createElement('li');
+        listItem.setAttribute('data-id', productId);
+        listItem.textContent = productName;
 
-    // Add a remove button
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'X';
-    removeButton.classList.add('cerrar-panel');
-    removeButton.onclick = () => listItem.remove();
+        // Add a remove button
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'X';
+        removeButton.classList.add('cerrar-panel');
+        removeButton.onclick = () => listItem.remove();
 
-    listItem.appendChild(removeButton);
-    favoritosList.appendChild(listItem);
+        listItem.appendChild(removeButton);
+        favoritosList.appendChild(listItem);
+    }
 
     // Open the favorites aside
     favoritos.classList.add('open');
 }
 
-// Function to toggle the favorites aside
-function toggleFavorites() {
+// Function to close the favorites aside
+function closeFavorites() {
     const favoritos = document.getElementById('favoritos');
-    favoritos.classList.toggle('open');
+    favoritos.classList.remove('open');
 }
 
-// Function to apply coupon
+// Updated function to apply coupon
 function applyCoupon() {
     const couponInput = document.getElementById('cupon-input');
     const couponCode = couponInput.value.trim();
 
     if (couponCode === 'DESCUENTO10') {
         const carrito = document.getElementById('carrito');
-        const descuentoItem = document.createElement('div');
-        descuentoItem.classList.add('carrito-linea');
-        descuentoItem.innerHTML = `
-            <div class="carrito-info">
-                <div class="carrito-nombre">Descuento aplicado</div>
-                <div class="carrito-calc">-10€</div>
-            </div>
-        `;
-        carrito.appendChild(descuentoItem);
-        alert('¡Cupón aplicado con éxito!');
+        const existingDiscount = carrito.querySelector('.descuento-item');
+
+        if (!existingDiscount) {
+            const descuentoItem = document.createElement('div');
+            descuentoItem.classList.add('carrito-linea', 'descuento-item');
+            descuentoItem.innerHTML = `
+                <div class="carrito-info">
+                    <div class="carrito-nombre">Descuento aplicado</div>
+                    <div class="carrito-calc">-10€</div>
+                </div>
+            `;
+            carrito.appendChild(descuentoItem);
+            alert('¡Cupón aplicado con éxito!');
+        } else {
+            alert('El cupón ya ha sido aplicado.');
+        }
     } else {
         alert('Cupón no válido.');
     }
