@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (p.editor) extraInfo = `Editor: ${p.editor}`;
             else if (p.edadRecomendada) extraInfo = `Edad: ${p.edadRecomendada}`;
             else if (p.ilustrador) extraInfo = `Ilustrador: ${p.ilustrador}`;
-            else if (p.CienciaFiccion) extraInfo = `Campo de estudio: ${p.campo}`;
+            else if (p.campo) extraInfo = `Campo de estudio: ${p.campo}`;
 
             card.innerHTML = `
                 <div class="card-body position-relative d-flex flex-column h-100">
@@ -540,18 +540,27 @@ function showButtonToast(btn, msg, ok = true) {
 }
 
 function getExtraInfo(producto) {
-  
-  return (
-    producto.autor ||
-    producto.campo||
-    producto.editor ||
-    producto.editorial ||
-    producto.edad ||
-    producto.edadRecomendada ||
-    producto.ilustrador ||
-    producto.extra ||
-    ""
-  );
+
+  if (producto.autor) return { label: "Autor", value: producto.autor };
+  if (producto.editor) return { label: "Editor", value: producto.editor };
+  if (producto.edadRecomendada) return { label: "Edad recomendada", value: producto.edadRecomendada };
+  if (producto.ilustrador) return { label: "Ilustrador", value: producto.ilustrador };
+
+  if (producto.campo) return { label: "Campo de estudio", value: producto.campo };
+  if (producto.campoEstudio) return { label: "Campo de estudio", value: producto.campoEstudio };
+  if (producto.campoDeEstudio) return { label: "Campo de estudio", value: producto.campoDeEstudio };
+
+  const tipo = (producto.tipo || producto.constructor?.name || "").toLowerCase();
+  const v = producto.extra;
+  if (!v) return null;
+
+  if (tipo.includes("novela")) return { label: "Autor", value: v };
+  if (tipo.includes("ciencia")) return { label: "Campo de estudio", value: v };
+  if (tipo.includes("ensayo")) return { label: "Editor", value: v };
+  if (tipo.includes("infantil")) return { label: "Edad recomendada", value: v };
+  if (tipo.includes("comic")) return { label: "Ilustrador", value: v };
+
+  return { label: "Extra", value: v };
 }
 
 function openProductoDetalle(producto) {
@@ -578,7 +587,7 @@ function openProductoDetalle(producto) {
     <div class="producto-modal-der">
       <h3>${escapeHtml(producto.nombre)} — € ${Number(producto.precio).toFixed(2)}</h3>
 
-      ${extra ? `<div class="producto-modal-meta"><strong>${escapeHtml(extra.label)}:</strong> ${escapeHtml(extra)}</div>` : ""}
+      ${extra ? `<div class="producto-modal-meta"><strong>${escapeHtml(extra.label)}:</strong> ${escapeHtml(extra.value)}</div>` : ""}
 
       <div class="producto-modal-meta"><strong>Descripción:</strong></div>
       <p style="margin:0; white-space: pre-wrap;">${escapeHtml(descripcionLarga)}</p>
@@ -606,6 +615,8 @@ function openProductoDetalle(producto) {
 // Delegación: click en imagen de producto
 if (grid) {
   grid.addEventListener("click", (e) => {
+    if (e.target.closest(".btn-carrito")) return;
+
     const img = e.target.closest("img.producto-img");
     if (!img) return;
 
@@ -620,18 +631,6 @@ if (grid) {
   });
 }
 
-// helper escapeHtml si no lo tienes ya
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-
-    // ======= INICIO =======
+// ======= INICIO =======
     mostrarProductos();
 });
