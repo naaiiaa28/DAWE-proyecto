@@ -680,10 +680,15 @@ function verificarCupon(codigo) {
 
 // Event listeners
 const botonFavoritos = document.getElementById('abrir-favoritos');
+const botonCerrarFavoritos = document.getElementById('cerrar-favoritos');
 const botonCupon = document.getElementById('aplicar-cupon');
 
 botonFavoritos.addEventListener('click', () => {
-  document.getElementById('favoritos').classList.toggle('open');
+  document.getElementById('favoritos').classList.add('open');
+});
+
+botonCerrarFavoritos.addEventListener('click', () => {
+  document.getElementById('favoritos').classList.remove('open');
 });
 
 botonCupon.addEventListener('click', () => {

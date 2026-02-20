@@ -493,6 +493,7 @@ nav ul.pagination .page-item.active .page-link {
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
   overflow-y: auto;
   transition: right 0.3s ease;
+  z-index: 1000;
 }
 #favoritos.open {
   right: 0;
@@ -521,8 +522,6 @@ nav ul.pagination .page-item.active .page-link {
 .estrella-favorito.marcada {
   color: gold;
 }
-
-/* CUPONES DE DESCUENTO */
 #cupon-descuento {
   margin-top: 20px;
   padding: 10px;
