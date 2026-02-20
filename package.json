@@ -1,0 +1,12 @@
+{
+  "name": "dawe-proyecto",
+  "version": "1.0.0",
+  "description": "Librería Online",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
