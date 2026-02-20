@@ -679,41 +679,6 @@ botonCerrarFavoritos.addEventListener('click', () => {
   document.getElementById('favoritos').classList.remove('open');
 });
 
-// Function to handle adding/removing a product to/from favorites
-function toggleFavorite(productId, productName) {
-    const favoritos = document.getElementById('favoritos');
-    const favoritosList = favoritos.querySelector('ul');
-    const existingItem = favoritosList.querySelector(`[data-id="${productId}"]`);
-
-    if (existingItem) {
-        // Remove the product if it already exists in favorites
-        existingItem.remove();
-    } else {
-        // Add the product to favorites
-        const listItem = document.createElement('li');
-        listItem.setAttribute('data-id', productId);
-        listItem.textContent = productName;
-
-        // Add a remove button
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'X';
-        removeButton.classList.add('cerrar-panel');
-        removeButton.onclick = () => listItem.remove();
-
-        listItem.appendChild(removeButton);
-        favoritosList.appendChild(listItem);
-    }
-
-    // Open the favorites aside
-    favoritos.classList.add('open');
-}
-
-// Function to close the favorites aside
-function closeFavorites() {
-    const favoritos = document.getElementById('favoritos');
-    favoritos.classList.remove('open');
-}
-
 // Updated function to apply coupon
 function applyCoupon() {
     const couponInput = document.getElementById('cupon-input');

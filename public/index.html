@@ -31,9 +31,6 @@
                     Carrito <span id="cart-count" class="badge bg-success">0</span>
                 </a>
             </li>
-            <li>
-                <a href="#" id="abrir-favoritos">Favoritos</a>
-            </li>
         </ul>
     </nav>
 
@@ -168,26 +165,6 @@
     <!-- Toast (si lo usas desde JS) -->
     <div id="carrito-toast" class="alert d-none mt-3 mb-0"></div>
   </div>
-</div>
-
-<aside id="favoritos" class="panel">
-  <div class="panel-header">
-    <h2>Favoritos</h2>
-    <button class="cerrar-panel" onclick="closeFavorites()">X</button>
-  </div>
-  <ul id="lista-favoritos">
-    <!-- Productos favoritos se añadirán aquí dinámicamente -->
-  </ul>
-</aside>
-
-<!-- Botón de estrella para añadir a favoritos -->
-<button class="btn-favorito" onclick="addToFavorites('Dune')">⭐</button>
-
-<!-- Añadir botón de favoritos a cada producto -->
-<div class="card">
-    <!-- ...existing code... -->
-    <button class="btn-favorito" onclick="toggleFavorite('dune', 'Dune')">⭐</button>
-    <!-- ...existing code... -->
 </div>
 
 </body>
