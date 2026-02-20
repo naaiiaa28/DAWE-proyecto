@@ -101,7 +101,7 @@ function renderizarProducto(producto) {
   const botonCarrito = document.createElement('button');
   botonCarrito.classList.add('agregar-carrito');
   botonCarrito.textContent = 'Añadir al carrito';
-  botonCarrito.addEventListener('click', () => agregarAlCarrito(producto));
+  botonCarrito.addEventListener('click', () => addToCart(producto.id, producto));
 
   const botonEstrella = agregarEstrellaFavorito(producto);
 

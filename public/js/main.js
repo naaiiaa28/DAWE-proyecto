@@ -664,9 +664,18 @@ function actualizarFavoritos() {
 function aplicarCupon(codigo) {
   const descuento = verificarCupon(codigo);
   if (descuento) {
-    agregarAlCarrito({ nombre: `Cupón: ${codigo}`, precio: -descuento });
+    const productoCupon = {
+      id: `cupon-${codigo}`,
+      name: `Cupón: ${codigo}`,
+      price: -descuento,
+      qty: 1
+    };
+    addToCart(productoCupon.id, productoCupon);
+    showToast(`Cupón aplicado: ${codigo} - Descuento: €${descuento}`, true);
+    updateBadge();
+    renderCartUI();
   } else {
-    alert('Cupón inválido');
+    showToast('Cupón inválido', false);
   }
 }
 
