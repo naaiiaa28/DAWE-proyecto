@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const paginacion = document.getElementById('paginacion');
     const cartCount = document.getElementById('cart-count');
 
+    
+
     let paginaActual = 1;
     const productosPorPagina = 6;
 
@@ -104,6 +106,37 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             `;
         }).join("");
+        // 1) Subtotal
+        const subtotal = cart.reduce((acc, it) => acc + (Number(it.price) || 0) * (Number(it.qty) || 0), 0);
+
+        // 2) Línea cupón (UI)
+        if (appliedCoupon && couponDiscount > 0) {
+            const line = document.createElement("div");
+            line.className = "carrito-linea descuento-item";
+            line.innerHTML = `
+            <div class="carrito-info">
+                <div class="carrito-nombre">Cupón ${escapeHtml(appliedCoupon)}</div>
+                <div class="carrito-calc">-${formatEUR(couponDiscount).replace("€ ", "")}€</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger quitar-cupon">Quitar</button>
+            `;
+            elItems.appendChild(line);
+
+            line.querySelector(".quitar-cupon").addEventListener("click", () => {
+            appliedCoupon = null;
+            couponDiscount = 0;
+            const inputCupon = document.getElementById("input-cupon");
+            if (inputCupon) inputCupon.value = "";
+            showToast("Cupón eliminado.", true);
+            renderCartUI();
+            });
+        }
+
+        // 3) Total con descuento
+        const total = Math.max(0, subtotal - (couponDiscount || 0));
+        elTotal.textContent = formatEUR(total);
+
+        
 
         if (elTotal) elTotal.textContent = formatEUR(total);
         }
@@ -161,8 +194,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         }
 
-    if (btnVaciar) btnVaciar.addEventListener("click", () => { clearCart(); updateBadge(); renderCartUI(); showToast("Carrito vaciado."); });
-    if (btnFinalizar) btnFinalizar.addEventListener("click", () => { clearCart(); updateBadge(); renderCartUI(); showToast("Compra finalizada (simulación) ✅", true); });
+    function resetCoupon() {
+        appliedCoupon = null;
+        couponDiscount = 0;
+        const inputCupon = document.getElementById("input-cupon");
+        if (inputCupon) inputCupon.value = "";
+    }
+
+    if (btnVaciar) btnVaciar.addEventListener("click", () => {
+        clearCart();
+        resetCoupon();
+        updateBadge();
+        renderCartUI();
+        showToast("Carrito vacío", true);
+    });
+
+    if (btnFinalizar) btnFinalizar.addEventListener("click", () => {
+        clearCart();
+        resetCoupon();
+        updateBadge();
+        renderCartUI();
+        showToast("Compra finalizada (simulación) ✅", true);
+    });
 
     updateBadge();
 
@@ -628,9 +681,52 @@ if (grid) {
     if (!producto) return;
 
     openProductoDetalle(producto);
+
+
+  });    
+}
+let appliedCoupon = null;
+let couponDiscount = 0;
+
+function applyCoupon() {
+  const couponInput = document.getElementById("input-cupon"); // ID REAL del HTML
+  if (!couponInput) return;
+
+  const code = couponInput.value.trim().toUpperCase();
+  if (!code) {
+    showToast("Introduce un cupón.", false);
+    return;
+  }
+
+  // Evitar duplicados
+  if (appliedCoupon === code) {
+    showToast("Ese cupón ya está aplicado.", false);
+    return;
+  }
+
+  // Validación simple (luego puedes ampliarla a varios cupones)
+  if (code === "DESCUENTO10") {
+    appliedCoupon = code;
+    couponDiscount = 10;
+
+    showToast("Cupón aplicado: -10€", true);
+    renderCartUI(); // <- en el Paso 6 te digo qué tocar dentro
+    return;
+  }
+
+  showToast("Cupón no válido.", false);
+}
+// Botón aplicar cupón
+const btnAplicarCupon = document.getElementById("aplicar-cupon");
+if (btnAplicarCupon) btnAplicarCupon.addEventListener("click", applyCoupon);
+
+// (Opcional) Enter en el input
+const inputCupon = document.getElementById("input-cupon");
+if (inputCupon) {
+  inputCupon.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") applyCoupon();
   });
 }
-
 // ======= INICIO =======
     mostrarProductos();
 });
@@ -678,31 +774,3 @@ botonFavoritos.addEventListener('click', () => {
 botonCerrarFavoritos.addEventListener('click', () => {
   document.getElementById('favoritos').classList.remove('open');
 });
-
-// Updated function to apply coupon
-function applyCoupon() {
-    const couponInput = document.getElementById('cupon-input');
-    const couponCode = couponInput.value.trim();
-
-    if (couponCode === 'DESCUENTO10') {
-        const carrito = document.getElementById('carrito');
-        const existingDiscount = carrito.querySelector('.descuento-item');
-
-        if (!existingDiscount) {
-            const descuentoItem = document.createElement('div');
-            descuentoItem.classList.add('carrito-linea', 'descuento-item');
-            descuentoItem.innerHTML = `
-                <div class="carrito-info">
-                    <div class="carrito-nombre">Descuento aplicado</div>
-                    <div class="carrito-calc">-10€</div>
-                </div>
-            `;
-            carrito.appendChild(descuentoItem);
-            alert('¡Cupón aplicado con éxito!');
-        } else {
-            alert('El cupón ya ha sido aplicado.');
-        }
-    } else {
-        alert('Cupón no válido.');
-    }
-}
