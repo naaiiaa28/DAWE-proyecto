@@ -133,12 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // 3) Total con descuento
-        const total = Math.max(0, subtotal - (couponDiscount || 0));
-        elTotal.textContent = formatEUR(total);
+        const ctotal = Math.max(0, subtotal - (couponDiscount || 0));
+        elTotal.textContent = formatEUR(cotal);
 
         
 
-        if (elTotal) elTotal.textContent = formatEUR(total);
+        if (elTotal) elTotal.textContent = formatEUR(ctotal);
         }
 
 
