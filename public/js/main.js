@@ -81,13 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         elVacio.classList.add("d-none");
 
-        let total = 0;
-
+        // 1) Pintar líneas normales
         elItems.innerHTML = cart.map((it) => {
             const price = Number(it.price) || 0;
             const qty = Number(it.qty) || 0;
             const sub = price * qty;
-            total += sub;
 
             return `
             <div class="carrito-linea" data-id="${escapeHtml(it.id)}">
@@ -106,17 +104,22 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             `;
         }).join("");
-        // 1) Subtotal
-        const subtotal = cart.reduce((acc, it) => acc + (Number(it.price) || 0) * (Number(it.qty) || 0), 0);
 
-        // 2) Línea cupón (UI)
+        // 2) Subtotal (UNA sola vez)
+        const subtotal = cart.reduce((acc, it) => {
+            const price = Number(it.price) || 0;
+            const qty = Number(it.qty) || 0;
+            return acc + price * qty;
+        }, 0);
+
+        // 3) Línea cupón (UI) + quitar cupón
         if (appliedCoupon && couponDiscount > 0) {
             const line = document.createElement("div");
             line.className = "carrito-linea descuento-item";
             line.innerHTML = `
             <div class="carrito-info">
                 <div class="carrito-nombre">Cupón ${escapeHtml(appliedCoupon)}</div>
-                <div class="carrito-calc">-${formatEUR(couponDiscount).replace("€ ", "")}€</div>
+                <div class="carrito-calc">- ${formatEUR(couponDiscount)}</div>
             </div>
             <button type="button" class="btn btn-sm btn-outline-danger quitar-cupon">Quitar</button>
             `;
@@ -132,15 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // 3) Total con descuento
-        const ctotal = Math.max(0, subtotal - (couponDiscount || 0));
-        elTotal.textContent = formatEUR(cotal);
-
-        
-
-        if (elTotal) elTotal.textContent = formatEUR(ctotal);
-        }
-
+        // 4) Total final (UNA sola vez)
+        const totalFinal = Math.max(0, subtotal - (couponDiscount || 0));
+        if (elTotal) elTotal.textContent = formatEUR(totalFinal);
+    }
 
     if (linkCarrito && offcanvas) {
         linkCarrito.addEventListener("click", (e) => {
