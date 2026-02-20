@@ -1,12 +1,19 @@
 {
   "name": "dawe-proyecto",
   "version": "1.0.0",
-  "description": "Librería Online",
-  "main": "server.js",
+  "description": "Librería Online - Proyecto DAWE",
+  "main": "public/js/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node public/js/server.js",
+    "dev": "nodemon public/js/server.js"
   },
+  "keywords": ["libreria", "books", "ecommerce"],
+  "author": "naaiiaa28",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
