@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     updateBadge();
-    updateFavBadge();
+    
     // colocar productos en pantalla 
 
     function mostrarProductos() {
@@ -837,6 +837,7 @@ function refreshFavoriteStars() {
 
 // ======= INICIO =======
     mostrarProductos();
+    updateFavBadge();
 });
 
 
