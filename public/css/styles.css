@@ -220,9 +220,12 @@ footer {
 }
 
 .btn-carrito {
+  width: 50px;
+  height: 50px;
   border: 1px solid #f5e0b7 !important;
   background-color: #f5e0b7 !important;
   color: #41300f !important; /* para que el icono se vea */
+  border-radius: 50%;
 }
 
 .btn-carrito:hover {
@@ -287,7 +290,7 @@ footer {
 
 /* 🔵 Cuando se arrastra un fichero encima */
 .drop-zone.dragover {
-    border-color: #0078ff;
+    border-color: #f31010;
     background: #f0f7ff;
     transform: scale(1.02);
 }
