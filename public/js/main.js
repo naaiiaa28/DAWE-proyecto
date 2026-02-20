@@ -634,3 +634,59 @@ if (grid) {
 // ======= INICIO =======
     mostrarProductos();
 });
+
+// Favoritos y cupones
+const favoritos = [];
+
+function toggleFavorito(producto) {
+  const index = favoritos.findIndex(fav => fav.id === producto.id);
+  if (index === -1) {
+    favoritos.push(producto);
+    actualizarFavoritos();
+    return true;
+  } else {
+    favoritos.splice(index, 1);
+    actualizarFavoritos();
+    return false;
+  }
+}
+
+function actualizarFavoritos() {
+  const listaFavoritos = document.getElementById('lista-favoritos');
+  listaFavoritos.innerHTML = '';
+  favoritos.forEach(producto => {
+    const li = document.createElement('li');
+    li.textContent = producto.nombre;
+    listaFavoritos.appendChild(li);
+  });
+}
+
+function aplicarCupon(codigo) {
+  const descuento = verificarCupon(codigo);
+  if (descuento) {
+    agregarAlCarrito({ nombre: `Cupón: ${codigo}`, precio: -descuento });
+  } else {
+    alert('Cupón inválido');
+  }
+}
+
+function verificarCupon(codigo) {
+  const cupones = {
+    'DESCUENTO10': 10,
+    'DESCUENTO20': 20
+  };
+  return cupones[codigo] || null;
+}
+
+// Event listeners
+const botonFavoritos = document.getElementById('abrir-favoritos');
+const botonCupon = document.getElementById('aplicar-cupon');
+
+botonFavoritos.addEventListener('click', () => {
+  document.getElementById('favoritos').classList.toggle('open');
+});
+
+botonCupon.addEventListener('click', () => {
+  const codigo = document.getElementById('input-cupon').value;
+  aplicarCupon(codigo);
+});

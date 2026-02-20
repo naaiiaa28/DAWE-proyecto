@@ -68,3 +68,43 @@ export class Producto {
         this.#imagen = value || '../imagenes/sin-imagen.png';
     }
 }
+
+function agregarEstrellaFavorito(producto) {
+  const botonEstrella = document.createElement('button');
+  botonEstrella.classList.add('estrella-favorito');
+  botonEstrella.textContent = '★';
+  botonEstrella.addEventListener('click', () => {
+    const marcado = toggleFavorito(producto);
+    botonEstrella.classList.toggle('marcada', marcado);
+  });
+  return botonEstrella;
+}
+
+function renderizarProducto(producto) {
+  const divProducto = document.createElement('div');
+  divProducto.classList.add('producto');
+
+  const img = document.createElement('img');
+  img.src = producto.imagen;
+  img.alt = producto.nombre;
+
+  const h3 = document.createElement('h3');
+  h3.textContent = producto.nombre;
+
+  const p = document.createElement('p');
+  p.textContent = producto.descripcion;
+
+  const span = document.createElement('span');
+  span.classList.add('precio');
+  span.textContent = `$${producto.precio}`;
+
+  const botonCarrito = document.createElement('button');
+  botonCarrito.classList.add('agregar-carrito');
+  botonCarrito.textContent = 'Añadir al carrito';
+  botonCarrito.addEventListener('click', () => agregarAlCarrito(producto));
+
+  const botonEstrella = agregarEstrellaFavorito(producto);
+
+  divProducto.append(img, h3, p, span, botonCarrito, botonEstrella);
+  return divProducto;
+}

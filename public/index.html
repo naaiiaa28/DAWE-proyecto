@@ -31,6 +31,9 @@
                     Carrito <span id="cart-count" class="badge bg-success">0</span>
                 </a>
             </li>
+            <li>
+                <a href="#" id="abrir-favoritos">Favoritos</a>
+            </li>
         </ul>
     </nav>
 
@@ -156,11 +159,36 @@
       <strong id="carrito-total">€ 0.00</strong>
     </div>
 
+    <div id="cupon-descuento">
+      <label for="input-cupon">Introduce tu cupón:</label>
+      <input type="text" id="input-cupon" placeholder="Código de cupón">
+      <button id="aplicar-cupon">Aplicar</button>
+    </div>
+
     <!-- Toast (si lo usas desde JS) -->
     <div id="carrito-toast" class="alert d-none mt-3 mb-0"></div>
   </div>
 </div>
 
+<aside id="favoritos" class="panel">
+  <h2>Favoritos</h2>
+  <ul id="lista-favoritos">
+    <!-- Productos favoritos se añadirán aquí dinámicamente -->
+  </ul>
+</aside>
+
+<section id="productos">
+  <!-- Ejemplo de producto con estrella para favoritos -->
+  <div class="producto">
+    <img src="imagenes/ejemplo.jpg" alt="Producto ejemplo">
+    <h3>Producto Ejemplo</h3>
+    <p>Descripción del producto.</p>
+    <span class="precio">$10.00</span>
+    <button class="agregar-carrito">Añadir al carrito</button>
+    <button class="estrella-favorito">★</button>
+  </div>
+  <!-- ...existing code... -->
+</section>
 
 </body>
 </html>
