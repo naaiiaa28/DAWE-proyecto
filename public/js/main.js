@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="carrito-nombre">${escapeHtml(it.name || it.id)}</div>
                 <div class="carrito-calc">
                     ${formatEUR(price)} ×
-                    <input class="carrito-qty" type="number" min="1" value="${qty}">
+                    <input class="carrito-qty" type="number" min="0" value="${qty}">
                     = <strong>${formatEUR(sub)}</strong>
                 </div>
                 </div>
@@ -165,20 +165,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Cambiar cantidad con el input number
-        elItems.addEventListener("input", (e) => {
+        elItems.addEventListener("change", (e) => {
             const input = e.target.closest(".carrito-qty");
             if (!input) return;
 
             const itemEl = e.target.closest(".carrito-linea");
             if (!itemEl) return;
 
-            let qty = Math.max(1, Math.floor(Number(input.value) || 1));
+            const value = Number(input.value);
 
-            // limitacion de productos (20 por producto)
+            if (isNaN(value) || value <= 0) {
+                removeLine(itemEl.dataset.id);
+                updateBadge();
+                renderCartUI();
+                return;
+            }
+
+            let qty = Math.floor(value);
+
             if (qty > CART_MAX_UNITS_PRODUCT) {
-            qty = CART_MAX_UNITS_PRODUCT;
-            input.value = String(qty);
-            showToast(`Máximo ${CART_MAX_UNITS_PRODUCT} por producto`, false);
+                qty = CART_MAX_UNITS_PRODUCT;
+                input.value = String(qty);
+                showToast(`Máximo ${CART_MAX_UNITS_PRODUCT} por producto`, false);
             }
 
             const cart = getCart();

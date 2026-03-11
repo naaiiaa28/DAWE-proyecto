@@ -90,8 +90,12 @@ export function decFromCart(productId) {
     if (idx === -1) return;
 
     const q = Number(cart[idx].qty) || 0;
-    if (q <= 1) cart.splice(idx, 1);
-    else cart[idx].qty = q - 1;
+
+    if (q <= 1) {
+        cart.splice(idx, 1); 
+    } else {
+        cart[idx].qty = q - 1; 
+    }
 
     saveCart(cart);
 }
