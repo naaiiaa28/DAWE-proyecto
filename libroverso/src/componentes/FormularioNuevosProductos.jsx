@@ -162,13 +162,13 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
                 onDragLeave={() => setDragging(false)}
                 onDrop={() => setDragging(false)}
               >
-                <span className="drop-zone-text">
-                  {dragging
-                    ? 'Suelta la imagen'
-                    : imagenFile
-                      ? imagenFile.name
-                      : 'Arrastra aquí la imagen del libro'}
-                </span>
+		<span className="drop-zone-text">
+		  {dragging
+		    ? 'Suelta la imagen'
+		    : imagenFile
+		      ? imagenFile.name
+		      : ''}
+		</span>
               </div>
             </FileUploader>
           )}
