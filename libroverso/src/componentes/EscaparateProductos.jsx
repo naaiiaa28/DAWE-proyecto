@@ -28,11 +28,33 @@ function ProductoCard({ producto, onAddToCart, onToggleFavorite, esFavorito, onO
   return (
     <div className="col-md-4">
       <div className="card h-100 position-relative producto-card">
+
+        {/* Botones esquina superior derecha */}
+        <div className="position-absolute top-0 end-0 m-2 d-flex gap-1" style={{ zIndex: 10 }}>
+          <button
+            type="button"
+            className={`btn-favorito ${esFavorito ? 'active' : ''}`}
+            onClick={handleFav}
+            aria-pressed={esFavorito}
+            data-id={producto.id}
+          >
+            {esFavorito ? '★' : '☆'}
+          </button>
+          <button
+            type="button"
+            className="btn btn-carrito btn-sm"
+            onClick={handleAddToCart}
+          >
+            🛒
+          </button>
+        </div>
+
         {toast && (
-          <div className="alert alert-success position-absolute top-0 end-0 m-2" style={{ zIndex: 10, fontSize: '0.85rem', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
+          <div className="alert alert-success position-absolute top-0 start-0 m-2" style={{ zIndex: 10, fontSize: '0.85rem', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
             {toast}
           </div>
         )}
+
         <img
           src={producto.imagen}
           className="card-img-top producto-img"
@@ -41,36 +63,19 @@ function ProductoCard({ producto, onAddToCart, onToggleFavorite, esFavorito, onO
           style={{ cursor: 'pointer' }}
           onError={e => { e.target.src = 'imagenes/sin-imagen.png' }}
         />
+
         <div className="card-body d-flex flex-column">
           <h5 className="card-title">{producto.nombre}</h5>
           <p className="card-text text-muted small flex-grow-1">{producto.descripcion}</p>
           <div className="d-flex justify-content-between align-items-center mt-auto">
             <span className="precio fw-bold">€ {Number(producto.precio).toFixed(2)}</span>
-            <div>
-              <button
-                type="button"
-                className={`btn-favorito me-1 ${esFavorito ? 'active' : ''}`}
-                onClick={handleFav}
-                aria-pressed={esFavorito}
-                data-id={producto.id}
-              >
-                {esFavorito ? '★' : '☆'}
-              </button>
-              <button
-                type="button"
-                className="btn btn-carrito btn-sm"
-                onClick={handleAddToCart}
-              >
-                🛒 Añadir
-              </button>
-            </div>
           </div>
         </div>
+
       </div>
     </div>
   )
 }
-
 export default function EscaparateProductos({ productos, onAddToCart, onToggleFavorite, isFavorite }) {
   const [busqueda, setBusqueda] = useState('')
   const [paginaActual, setPaginaActual] = useState(1)
