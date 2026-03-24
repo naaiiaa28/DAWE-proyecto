@@ -149,28 +149,24 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
             </div>
           ) : (
             <FileUploader
-              handleChange={handleFile}
-              name="imagen-libro"
-              types={FILE_TYPES}
-              disabled={disabled}
-              hoverTitle="Suelta la imagen"
-              classes="drop-zone-uploader"
-              dropMessageStyle={{ display: 'none' }}
-            >
-              <div className={`drop-zone ${dragging ? 'dragging' : ''}`}
-                onDragEnter={() => setDragging(true)}
-                onDragLeave={() => setDragging(false)}
-                onDrop={() => setDragging(false)}
-              >
-		<span className="drop-zone-text">
-		  {dragging
-		    ? 'Suelta la imagen'
-		    : imagenFile
-		      ? imagenFile.name
-		      : ''}
-		</span>
-              </div>
-            </FileUploader>
+		  handleChange={handleFile}
+		  name="imagen-libro"
+		  types={FILE_TYPES}
+		  disabled={disabled}
+		  classes="drop-zone-uploader"
+		  dropMessageStyle={{ display: 'none' }}
+		  onDraggingStateChange={(dragging) => setDragging(dragging)}  // ← añade esto
+		>
+		  <div className={`drop-zone ${dragging ? 'dragging' : ''}`}>
+		    <span className="drop-zone-text">
+		      {dragging
+			? 'Suelta la imagen'
+			: imagenFile
+			  ? imagenFile.name
+			  : ''}
+		    </span>
+		  </div>
+	</FileUploader>
           )}
         </div>
 
