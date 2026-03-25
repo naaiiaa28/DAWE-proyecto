@@ -21,7 +21,15 @@ export default function Carrito({ isOpen, onClose, carrito, onRemove, onClear, o
   const total = Math.max(0, subtotal - couponDiscount)
 
   const handleQtyChange = (id, val) => {
-    let qty = Math.max(1, Math.floor(Number(val) || 1))
+    let qty = Math.floor(Number(val))
+
+    if (isNaN(qty)) qty = 1
+    
+    if (qty <= 0) {
+    onRemove(id)
+    showToast('Producto eliminado', true)
+    return
+  }
     if (qty > (maxUnits || MAX_COPIAS)) {
       qty = maxUnits || MAX_COPIAS
       showToast(`Máximo ${maxUnits || MAX_COPIAS} por producto`, false)
@@ -110,7 +118,7 @@ export default function Carrito({ isOpen, onClose, carrito, onRemove, onClear, o
                           <input
                             className="carrito-qty"
                             type="number"
-                            min="1"
+                            min="0"
                             value={qty}
                             onChange={e => handleQtyChange(it.id, e.target.value)}
                           />
