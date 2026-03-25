@@ -61,7 +61,7 @@ function ProductoCard({ producto, onAddToCart, onToggleFavorite, esFavorito, onO
           alt={producto.nombre}
           onClick={() => onOpenDetalle(producto)}
           style={{ cursor: 'pointer' }}
-          onError={e => { e.target.src = 'imagenes/sin-imagen.png' }}
+          onError={e => { e.target.src = 'imagenes/INF.png' }}
         />
 
         <div className="card-body d-flex flex-column">
@@ -102,14 +102,10 @@ export default function EscaparateProductos({ productos, onAddToCart, onToggleFa
   return (
     <>
       <BuscadorProductos busqueda={busqueda} onBusqueda={handleBusqueda} />
-
-      <Paginacion
-        paginaActual={paginaActual}
-        totalPaginas={totalPaginas}
-        mostrando={pagina.length}
-        total={filtrados.length}
-        onCambiarPagina={handleCambiarPagina}
-      />
+      
+      <p id="contador-productos" className="text-muted mb-2">
+	 Mostrando {Math.min(paginaActual * PRODUCTOS_POR_PAGINA, filtrados.length)} de {filtrados.length}
+	</p>
 
       <div id="grid-productos" className="row g-3">
         {pagina.map(p => (
@@ -128,8 +124,6 @@ export default function EscaparateProductos({ productos, onAddToCart, onToggleFa
         <Paginacion
           paginaActual={paginaActual}
           totalPaginas={totalPaginas}
-          mostrando={pagina.length}
-          total={filtrados.length}
           onCambiarPagina={handleCambiarPagina}
         />
       )}

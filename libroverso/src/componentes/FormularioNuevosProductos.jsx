@@ -51,7 +51,10 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
 
     if (!nombre.trim()) return showMsg('El nombre es obligatorio.', 'danger')
     if (!precio || isNaN(Number(precio)) || Number(precio) < 0) return showMsg('El precio no es válido.', 'danger')
-    if (!descripcion.trim()) return showMsg('La descripción es obligatoria.', 'danger')
+    if (!tipo) return showMsg('Debes seleccionar un tipo de libro.', 'danger')
+    if (tipo && !extra.trim())
+  	return showMsg(`El campo "${PLACEHOLDER_EXTRA[tipo]}" es obligatorio.`, 'danger')
+
 
     const data = {
       tipo,
