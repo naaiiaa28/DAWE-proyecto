@@ -147,29 +147,25 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
         {/* Drag & Drop with react-drag-drop-files */}
         <div className={`drop-zone-wrapper mb-2 ${disabled ? 'drop-zone-disabled' : ''}`}>
           {disabled ? (
-            <div className="drop-zone drop-zone-offline">
-              <span className="drop-zone-text">Arrastra aquí la imagen del libro</span>
-            </div>
+            <div className="drop-zone drop-zone-offline" />
           ) : (
             <FileUploader
-		  handleChange={handleFile}
-		  name="imagen-libro"
-		  types={FILE_TYPES}
-		  disabled={disabled}
-		  classes="drop-zone-uploader"
-		  dropMessageStyle={{ display: 'none' }}
-		  onDraggingStateChange={(dragging) => setDragging(dragging)}  // ← añade esto
-		>
-		  <div className={`drop-zone ${dragging ? 'dragging' : ''}`}>
-		    <span className="drop-zone-text">
-		      {dragging
-			? 'Suelta la imagen'
-			: imagenFile
-			  ? imagenFile.name
-			  : ''}
-		    </span>
-		  </div>
-	</FileUploader>
+              handleChange={handleFile}
+              name="imagen-libro"
+              types={FILE_TYPES}
+              disabled={disabled}
+              classes="drop-zone-uploader"
+              dropMessageStyle={{ display: 'none' }}
+              onDraggingStateChange={(dragging) => setDragging(dragging)}
+            >
+              <div className={`drop-zone ${dragging ? 'dragging' : ''}`}>
+                {(dragging || imagenFile) && (
+                  <span className="drop-zone-text">
+                    {dragging ? 'Suelta la imagen' : imagenFile.name}
+                  </span>
+                )}
+              </div>
+            </FileUploader>
           )}
         </div>
 
