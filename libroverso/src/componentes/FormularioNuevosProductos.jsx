@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { FileUploader } from 'react-drag-drop-files'
+import { useRef } from 'react'
+
 
 const TIPOS_LIBRO = [
   { value: '', label: 'Tipo de libro' },
@@ -30,6 +32,8 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
   const [imagenUrl, setImagenUrl] = useState('')
   const [mensaje, setMensaje] = useState(null) // { tipo: 'success'|'danger', texto }
   const [dragging, setDragging] = useState(false)
+  const [imagenOrigen, setImagenOrigen] = useState(null) // 'file' | 'drop' | null
+  const fileInputRef = useRef(null)
 
   const disabled = !isOnline
 
@@ -39,10 +43,18 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
   }
 
   const handleFile = (file) => {
-    if (!file) return
+  if (!file) return
     setImagenFile(file)
-    const url = URL.createObjectURL(file)
-    setImagenUrl(url)
+    setImagenUrl(URL.createObjectURL(file))
+    setImagenOrigen('drop')
+  }
+
+  const handleFileInput = (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+    setImagenFile(file)
+    setImagenUrl(URL.createObjectURL(file))
+    setImagenOrigen('file')
   }
 
   const handleSubmit = (e) => {
@@ -76,7 +88,12 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
     setExtra('')
     setImagenFile(null)
     setImagenUrl('')
+    setImagenOrigen(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
+
+  const fileInputDisabled = disabled || imagenOrigen === 'drop'
+  const dropZoneDisabled = disabled || imagenOrigen === 'file'
 
   return (
     <>
@@ -144,9 +161,21 @@ export default function FormularioNuevosProductos({ onAddProduct, isOnline }) {
           />
         </div>
 
+        <div className="mb-2">
+          <input
+            type="file"
+            id="imagen-libro"
+            className="form-control"
+            accept="image/jpg,image/jpeg,image/png,image/webp,image/gif"
+            ref={fileInputRef}
+            onChange={handleFileInput}
+            disabled={fileInputDisabled}
+          />
+        </div>
+
         {/* Drag & Drop with react-drag-drop-files */}
-        <div className={`drop-zone-wrapper mb-2 ${disabled ? 'drop-zone-disabled' : ''}`}>
-          {disabled ? (
+        <div className={`drop-zone-wrapper mb-2 ${dropZoneDisabled ? 'drop-zone-disabled' : ''}`}>
+          {dropZoneDisabled ? (
             <div className="drop-zone drop-zone-offline" />
           ) : (
             <FileUploader
