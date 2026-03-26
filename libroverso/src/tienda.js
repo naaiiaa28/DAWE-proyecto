@@ -1,9 +1,9 @@
-import { Novela } from './Novela.js'
-import { CienciaFiccion } from './CienciaFiccion.js'
-import { Ensayo } from './Ensayo.js'
-import { Infantil } from './Infantil.js'
-import { Comic } from './Comic.js'
-import { Producto } from './Producto.js'
+import { Novela } from './modelos/Novela.js'
+import { CienciaFiccion } from './modelos/CienciaFiccion.js'
+import { Ensayo } from './modelos/Ensayo.js'
+import { Infantil } from './modelos/Infantil.js'
+import { Comic } from './modelos/Comic.js'
+import { Producto } from './modelos/Producto.js'
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 export const DIVISA = '€'
