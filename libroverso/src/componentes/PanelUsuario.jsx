@@ -3,15 +3,17 @@ export default function PanelUsuario({ usuario, visitCount, onLogout }) {
     <>
       <h2>Mi sesión</h2>
       <p className="panel-usuario-bienvenida">
-        Bienvenido/a, <strong>{usuario.nombre}</strong>
+        Bienvenide, <strong>{usuario.nombre}</strong>
       </p>
       <div className="panel-usuario-datos">
+        {usuario.rol && (
+          <div className="panel-usuario-fila">
+            <span className="panel-usuario-label">Rol</span>
+            <span className="panel-usuario-valor">{usuario.rol}</span>
+          </div>
+        )}
         <div className="panel-usuario-fila">
-          <span className="panel-usuario-label">Rol</span>
-          <span className="panel-usuario-valor">{usuario.rol || 'Sin rol'}</span>
-        </div>
-        <div className="panel-usuario-fila">
-          <span className="panel-usuario-label">Visitas</span>
+          <span className="panel-usuario-label">Número de visitas</span>
           <span className="panel-usuario-valor">{visitCount}</span>
         </div>
       </div>
