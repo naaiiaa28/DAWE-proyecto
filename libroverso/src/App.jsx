@@ -13,7 +13,6 @@ import Carrito from './componentes/Carrito.jsx'
 import Favoritos from './componentes/Favoritos.jsx'
 import Pie from './componentes/Pie.jsx'
 import {
-  productosIniciales,
   cargarCarrito,
   addToCart,
   decFromCart,
@@ -27,7 +26,7 @@ import {
 } from './tienda.js'
 
 export default function App() {
-  const [productos, setProductos] = useState(() => [...productosIniciales])
+  const [productos, setProductos] = useState([])
   const [carrito, setCarrito] = useState(() => cargarCarrito())
   const [favoritos, setFavoritos] = useState(() => getFavorites())
   const [carritoOpen, setCarritoOpen] = useState(false)
@@ -46,6 +45,21 @@ export default function App() {
       window.removeEventListener('online', goOnline)
       window.removeEventListener('offline', goOffline)
     }
+  }, [])
+
+  // Cargar productos desde MongoDB al arrancar
+  useEffect(() => {
+    fetch('/api/productos')
+      .then(r => r.json())
+      .then(data => {
+        const lista = data.map(p => {
+          const producto = crearProducto(p)
+          if (producto) producto._id = p._id
+          return producto
+        }).filter(Boolean)
+        setProductos(lista)
+      })
+      .catch(() => {})
   }, [])
 
   // Rehidratar sesión desde el servidor al cargar la página

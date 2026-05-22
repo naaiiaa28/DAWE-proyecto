@@ -11,7 +11,7 @@ router.get('/sesion', async (req, res) => {
     return res.json({ email: null })
   }
   try {
-    const usuario = await Usuario.findOne({ email: req.session.email }, '-password')
+    const usuario = await Usuario.findOne({ email: req.session.email })
     if (!usuario) {
       req.session.destroy(() => {})
       return res.json({ email: null })
@@ -32,7 +32,7 @@ router.post('/login', async (req, res) => {
   }
   try {
     const decoded = await admin.auth().verifyIdToken(idToken)
-    const usuario = await Usuario.findOne({ email: decoded.email }, '-password')
+    const usuario = await Usuario.findOne({ email: decoded.email })
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado en la base de datos' })
     }
@@ -56,7 +56,7 @@ router.post('/logout', (req, res) => {
 // GET /api/usuarios/:id
 router.get('/:id', async (req, res) => {
   try {
-    const usuario = await Usuario.findById(req.params.id, '-password')
+    const usuario = await Usuario.findById(req.params.id)
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' })
     res.json(usuario)
   } catch {
@@ -71,7 +71,7 @@ router.put('/:id', async (req, res) => {
     const usuario = await Usuario.findByIdAndUpdate(
       req.params.id,
       { nombre, apellidos, telefono, direccion },
-      { new: true, runValidators: true, select: '-password' }
+      { new: true, runValidators: true }
     )
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' })
     res.json(usuario)
